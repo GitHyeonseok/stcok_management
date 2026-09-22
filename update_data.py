@@ -1,6 +1,9 @@
 import os
 import json
 import datetime
+from zoneinfo import ZoneInfo
+
+import pandas as pd
 import requests
 import yfinance as yf
 
@@ -17,6 +20,10 @@ KRX_GOLD_URL = "https://data-dbg.krx.co.kr/svc/apis/gen/gold_bydd_trd"
 
 def now_kst():
     return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9)))
+
+
+def now_ny():
+    return datetime.datetime.now(ZoneInfo("America/New_York"))
 
 
 def clean_number(value):
@@ -48,11 +55,90 @@ def latest_price(ticker):
     return 0
 
 
+def calculate_monthly_heikin_ashi(history):
+    """
+    QQQ의 완료된 월봉만 사용해 표준 Heikin Ashi 상태를 계산한다.
+    현재 진행 중인 달은 신호에 포함하지 않는다.
+    """
+    empty = {
+        "state": None,
+        "previous_state": None,
+        "changed": False,
+        "transition": "none",
+        "completed_month": None,
+        "ha_open": 0,
+        "ha_close": 0,
+    }
+
+    if history is None or history.empty:
+        return empty
+
+    df = history[["Open", "High", "Low", "Close"]].dropna().copy()
+    if df.empty:
+        return empty
+
+    idx = df.index
+    if getattr(idx, "tz", None) is not None:
+        naive_idx = idx.tz_convert("America/New_York").tz_localize(None)
+    else:
+        naive_idx = idx
+
+    current_period = pd.Period(now_ny().strftime("%Y-%m"), freq="M")
+    periods = naive_idx.to_period("M")
+    mask = periods < current_period
+    df = df.loc[mask]
+    periods = periods[mask]
+
+    if df.empty:
+        return empty
+
+    monthly = df.groupby(periods).agg({
+        "Open": "first",
+        "High": "max",
+        "Low": "min",
+        "Close": "last",
+    }).dropna()
+
+    if len(monthly) < 2:
+        return empty
+
+    ha_opens = []
+    ha_closes = []
+
+    for row in monthly.itertuples():
+        ha_close = (float(row.Open) + float(row.High) + float(row.Low) + float(row.Close)) / 4
+        if not ha_opens:
+            ha_open = (float(row.Open) + float(row.Close)) / 2
+        else:
+            ha_open = (ha_opens[-1] + ha_closes[-1]) / 2
+        ha_opens.append(ha_open)
+        ha_closes.append(ha_close)
+
+    states = ["green" if c > o else "red" for o, c in zip(ha_opens, ha_closes)]
+    state = states[-1]
+    previous_state = states[-2]
+    changed = state != previous_state
+
+    if previous_state == "red" and state == "green":
+        transition = "red_to_green"
+    elif previous_state == "green" and state == "red":
+        transition = "green_to_red"
+    else:
+        transition = "none"
+
+    return {
+        "state": state,
+        "previous_state": previous_state,
+        "changed": changed,
+        "transition": transition,
+        "completed_month": str(monthly.index[-1]),
+        "ha_open": round(ha_opens[-1], 4),
+        "ha_close": round(ha_closes[-1], 4),
+    }
+
+
 def fetch_krx_gold():
-    """
-    KRX 금시장 '금 99.99_1kg'의 가장 최근 거래일 종가(원/g)를 반환.
-    주말/휴장일/당일 데이터 미게시 상황을 고려해 최근 10일을 역순 조회한다.
-    """
+    """KRX 금시장 '금 99.99_1kg'의 최근 거래일 종가(원/g)를 반환."""
     auth_key = os.getenv("KRX_API_KEY", "").strip()
     if not auth_key:
         print("KRX_API_KEY is missing.")
@@ -79,10 +165,8 @@ def fetch_krx_gold():
             rows = payload.get("OutBlock_1", [])
 
             if not isinstance(rows, list) or not rows:
-                print(f"KRX gold: no rows for {bas_dd}")
                 continue
 
-            # 정확히 '금 99.99_1kg' 우선. 표기 차이가 있으면 1kg + 99.99 조합으로 보조 탐색.
             target = next(
                 (x for x in rows if str(x.get("ISU_NM", "")).strip() == "금 99.99_1kg"),
                 None,
@@ -98,13 +182,10 @@ def fetch_krx_gold():
                 )
 
             if target is None:
-                print(f"KRX gold: target product not found for {bas_dd}. "
-                      f"Products={[x.get('ISU_NM') for x in rows]}")
                 continue
 
             price = clean_number(target.get("TDD_CLSPRC"))
             if price <= 0:
-                print(f"KRX gold: invalid close for {bas_dd}: {target}")
                 continue
 
             return {
@@ -120,8 +201,7 @@ def fetch_krx_gold():
             }
 
         except requests.HTTPError as e:
-            print(f"KRX gold HTTP error for {bas_dd}: {e} / body={r.text[:300]}")
-            # 인증/승인 오류라면 날짜를 바꿔도 해결되지 않으므로 중단
+            print(f"KRX gold HTTP error for {bas_dd}: {e}")
             if r.status_code in (401, 403):
                 break
         except Exception as e:
@@ -146,10 +226,19 @@ def get_market_data():
     except Exception as e:
         print(f"FX Fetch Error: {e}")
 
-    # 전략 기준: QQQ 종가 + 120/200일 이동평균
+    # QQQ: 현재 가격 + 참고용 120/200일선 + 핵심 전략인 확정 월봉 HA
     qqq_price = qqq_change = qqq_pct = sma_120 = sma_200 = 0
+    qqq_ha = {
+        "state": None,
+        "previous_state": None,
+        "changed": False,
+        "transition": "none",
+        "completed_month": None,
+        "ha_open": 0,
+        "ha_close": 0,
+    }
     try:
-        qqq_hist = yf.Ticker("QQQ").history(period="18mo", interval="1d")
+        qqq_hist = yf.Ticker("QQQ").history(period="10y", interval="1d", auto_adjust=True)
         closes = qqq_hist["Close"].dropna()
         if len(closes) >= 200:
             current_close = float(closes.iloc[-1])
@@ -160,12 +249,13 @@ def get_market_data():
                 qqq_pct = round((current_close - prev_close) / prev_close * 100, 2)
             sma_120 = round(float(closes.rolling(120).mean().iloc[-1]), 2)
             sma_200 = round(float(closes.rolling(200).mean().iloc[-1]), 2)
+            qqq_ha = calculate_monthly_heikin_ashi(qqq_hist)
         else:
             print(f"QQQ Fetch Error: not enough history ({len(closes)} rows)")
     except Exception as e:
         print(f"QQQ Fetch Error: {e}")
 
-    # VXN은 매매 필수조건이 아니라 QLD 변동성 위험을 보는 보조지표
+    # VXN은 매매조건이 아니라 참고용 변동성 지표
     vxn_price = vxn_change = vxn_pct = 0
     try:
         vxn_hist = yf.Ticker("^VXN").history(period="10d", interval="1d")
@@ -197,8 +287,6 @@ def get_market_data():
     if gold:
         gold["updated_at"] = stamp
         prices["gold"] = gold
-        print(f"KRX Gold OK: {gold['name']} {gold['price']:,.0f} KRW/g "
-              f"(market date {gold['market_date']})")
     else:
         prices["gold"] = {
             "ticker": None,
@@ -209,10 +297,10 @@ def get_market_data():
             "updated_at": stamp,
             "status": "unavailable",
         }
-        print("KRX Gold unavailable.")
 
     data = {
         "updated_at": stamp,
+        "strategy_version": "qqq_monthly_heikin_ashi_v1",
         "fx_rate": fx_rate,
         "fx_change": fx_change,
         "fx_pct": fx_pct,
@@ -222,6 +310,7 @@ def get_market_data():
             "pct": qqq_pct,
             "sma_120": sma_120,
             "sma_200": sma_200,
+            "ha_monthly": qqq_ha,
         },
         "vxn": {
             "price": vxn_price,
@@ -234,6 +323,7 @@ def get_market_data():
     with open("data.json", "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
+    print(f"QQQ monthly HA: {qqq_ha}")
     print("data.json updated successfully!")
 
 

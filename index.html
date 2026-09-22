@@ -30,7 +30,7 @@ table{width:100%;border-collapse:collapse;font-size:.77rem;margin-top:8px}th,td{
 </head>
 <body>
 <div class="container">
-<div class="header"><h1>💰 내 자산관리 시스템</h1><p>대시보드 → 자산 업데이트 → 시장 판단 → 리밸런싱 → 기록</p></div>
+<div class="header"><h1>💰 내 자산관리 시스템</h1><p>대시보드 → 자산 업데이트 → QQQ 월봉 HA → 리밸런싱 → 기록</p></div>
 
 
 
@@ -81,10 +81,10 @@ table{width:100%;border-collapse:collapse;font-size:.77rem;margin-top:8px}th,td{
 <button class="green" onclick="applyRecognizedAssets()">확인한 금액을 내 자산에 반영</button>
 </div>
 </div><div class="card"><h2>📈 3. 자동 시장 데이터</h2><div class="status" id="marketData">data.json 불러오는 중...</div></div><div class="card">
-<h2>🚦 4. QLD 추세추종 전략</h2>
-<p class="note"><b>핵심 규칙:</b> QQQ가 120일선·200일선 위이고 S5TW가 30 이상이면 QLD 매수/보유 가능. QQQ가 120일선 아래이거나 S5TW가 30 미만이면 QLD 신규매수를 중단하고 보유분은 축소·매도를 검토합니다. VXN과 120MA &gt; 200MA 여부는 보조 위험지표로만 봅니다.</p>
-<label>현재 S5TW (%) — 수동 입력</label><input id="s5twInput" min="0" max="100" step="0.01" oninput="saveS5TW()" placeholder="예: 31.5" type="number"/>
-<div class="signal wait" id="signalStatus">시장 데이터 확인 중...</div><div class="status" id="signalDetail"></div>
+<h2>🚦 4. QLD 월봉 HA 전략</h2>
+<p class="note"><b>핵심 규칙:</b> QQQ의 <b>확정 월봉 하이킨아시(HA)</b>가 초록이면 QLD 목표비중 30%를 보유하고, 빨강이면 QLD를 정리해 공격자금을 외화RP에서 대기합니다. 현재 진행 중인 월봉 색은 신호에 사용하지 않습니다.</p>
+<div class="signal wait" id="signalStatus">시장 데이터 확인 중...</div>
+<div class="status" id="signalDetail"></div>
 </div><div class="card">
 <h2>📂 5. 투자자산 보유 현황</h2>
 <div class="scroll"><table><thead><tr><th>종목</th><th>목표</th><th>현재 평가금액</th></tr></thead><tbody id="holdingInputs"></tbody></table></div>
@@ -145,7 +145,7 @@ table{width:100%;border-collapse:collapse;font-size:.77rem;margin-top:8px}th,td{
 <div><label>구분</label><select id="tradeType"><option>매수</option><option>매도</option><option>환전</option><option>배당</option><option>이자</option></select></div>
 <div><label>거래 금액</label><input id="tradeAmount" type="number"/></div>
 </div>
-<label>거래 이유 / 기록</label><textarea id="tradeMemo" placeholder="예: QQQ 120·200일선 위 + S5TW 30 이상"></textarea>
+<label>거래 이유 / 기록</label><textarea id="tradeMemo" placeholder="예: QQQ 확정 월봉 HA 초록 → QLD 보유"></textarea>
 <button onclick="addTrade()">매매 기록 추가</button>
 <div class="scroll"><table><thead><tr><th>날짜</th><th>종목</th><th>구분</th><th>금액</th><th>기록</th><th></th></tr></thead><tbody id="tradeTable"></tbody></table></div>
 </div><div class="card">
@@ -186,7 +186,7 @@ cashKRW:0,brokerCash:0,emergency:0,plannedExpense:0,foreignRP:0,otherAsset:0,oth
 goalAmount:100000000,goalDate:"",monthlyContribution:0,
 holdings:{qld:0,qqq:0,voo:0,brkb:0,visa:0,gold:0},
 investmentPrincipal:0,incomeReceived:0,monthlyIncome:0,fixedExpense:0,livingExpense:0,otherExpense:0,
-s5tw:0,s5twBottomDetected:false,trades:[],snapshots:[],workerUrl:"" // s5twBottomDetected는 구버전 백업 호환용
+s5tw:0,s5twBottomDetected:false,trades:[],snapshots:[],workerUrl:"" // s5tw 관련 값은 구버전 백업 호환용이며 현재 매매조건에는 사용하지 않음
 }}
 function loadData(){try{const x=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");if(!x)return defaultData();return{...defaultData(),...x,holdings:{...defaultData().holdings,...(x.holdings||{})}}}catch{return defaultData()}}
 let appData=loadData();
@@ -210,10 +210,9 @@ let appData=loadData();
 const money=v=>Math.round(Number(v)||0).toLocaleString()+"원";
 const num=id=>Number(document.getElementById(id)?.value)||0;
 
-function createHoldingInputs(){const t=document.getElementById("holdingInputs");t.innerHTML="";portfolio.forEach(p=>{t.insertAdjacentHTML("beforeend",`<tr><td><b>${p.name}</b></td><td style="text-align:center">${p.weight}%</td><td><input type="number" id="holding_${p.id}" value="${appData.holdings[p.id]||0}" onchange="saveAll()"></td></tr>`);})}
+function createHoldingInputs(){const t=document.getElementById("holdingInputs");t.innerHTML="";portfolio.forEach(p=>{const target=p.id==="qld"?"30% (HA ON) / 0% (OFF)":p.weight+"%";t.insertAdjacentHTML("beforeend",`<tr><td><b>${p.name}</b></td><td style="text-align:center">${target}</td><td><input type="number" id="holding_${p.id}" value="${appData.holdings[p.id]||0}" onchange="saveAll()"></td></tr>`);})}
 function populateInputs(){
 ["cashKRW","brokerCash","emergency","plannedExpense","foreignRP","otherAsset","otherInvestment","debt","rebalanceRpDeploy","rebalanceBrokerDeploy","rebalanceCashDeploy","rebalanceNewDeploy","goalAmount","goalDate","monthlyContribution","investmentPrincipal","incomeReceived","monthlyIncome","fixedExpense","livingExpense","otherExpense"].forEach(id=>{const e=document.getElementById(id);if(e)e.value=appData[id]??""});
-document.getElementById("s5twInput").value=appData.s5tw||"";
 document.getElementById("tradeDate").value=new Date().toISOString().slice(0,10);
 document.getElementById("workerUrl").value=appData.workerUrl||"";
 document.getElementById("rebalanceMode").value=appData.rebalanceMode||"buyOnly";
@@ -278,17 +277,20 @@ function updateRebalanceInputs(){
   subject to buy_i >= 0, Σbuy_i = cash.
   즉 목표금액보다 낮은 종목을 water-filling 방식으로 채운다.
 */
-function optimalBuyOnly(current,weights,cash){
+function optimalBuyOnly(current,weights,cash,targetTotal=null){
   const n=current.length, buys=Array(n).fill(0);
   if(cash<=0)return buys;
 
-  const finalTotal=current.reduce((a,b)=>a+b,0)+cash;
+  const finalTotal=targetTotal??(current.reduce((a,b)=>a+b,0)+cash);
   const target=weights.map(w=>finalTotal*w);
-  const gaps=current.map((v,i)=>target[i]-v);
+  const gaps=current.map((v,i)=>Math.max(0,target[i]-v));
+  const needed=gaps.reduce((a,b)=>a+b,0);
 
-  // buy_i = max(0, gap_i + lambda), lambda를 찾아 합계가 cash가 되게 함.
-  let lo=-Math.max(...gaps.map(Math.abs),1)-cash;
-  let hi=cash+Math.max(...gaps.map(Math.abs),1);
+  // 목표까지 필요한 금액이 투입액보다 작으면 남는 현금은 그대로 둔다.
+  if(needed<=cash+0.01)return gaps;
+
+  // 필요한 금액이 더 크면 목표 미달 자산 사이에 투입액을 최적으로 배분한다.
+  let lo=-Math.max(...gaps,1), hi=0;
   for(let k=0;k<100;k++){
     const mid=(lo+hi)/2;
     const sum=gaps.reduce((acc,g)=>acc+Math.max(0,g+mid),0);
@@ -296,16 +298,10 @@ function optimalBuyOnly(current,weights,cash){
   }
   const lambda=(lo+hi)/2;
   for(let i=0;i<n;i++)buys[i]=Math.max(0,gaps[i]+lambda);
-
-  // 부동소수점 오차를 마지막 양수 항목에 보정
-  const sum=buys.reduce((a,b)=>a+b,0), delta=cash-sum;
-  let idx=buys.findIndex(x=>x>0);
-  if(idx<0)idx=0;
-  buys[idx]=Math.max(0,buys[idx]+delta);
   return buys;
 }
 
-function executableWholeShareBuys(current,weights,idealBuys,cash){
+function executableWholeShareBuys(current,weights,idealBuys,cash,targetTotal=null){
   const fx=Number(marketDataGlobal?.fx_rate)||0;
   const costs=portfolio.map(p=>{
     const info=marketDataGlobal?.prices?.[p.id]||null;
@@ -313,10 +309,10 @@ function executableWholeShareBuys(current,weights,idealBuys,cash){
     if(price<=0)return 0;
     return info?.currency==="USD"?(fx>0?price*fx:0):price;
   });
-  const qty=costs.map((c,i)=>c>0?Math.floor(Math.max(0,idealBuys[i])/c):0);
+  const qty=costs.map((cost,i)=>cost>0?Math.floor(Math.max(0,idealBuys[i])/cost):0);
   let spent=qty.reduce((sum,q,i)=>sum+q*costs[i],0);
   let remaining=Math.max(0,cash-spent);
-  const finalTotal=current.reduce((a,b)=>a+b,0)+cash;
+  const finalTotal=targetTotal??(current.reduce((a,b)=>a+b,0)+cash);
   const targets=weights.map(w=>finalTotal*w);
   const error=(q)=>q.reduce((sum,_,i)=>{
     const after=current[i]+q[i]*costs[i];
@@ -324,15 +320,15 @@ function executableWholeShareBuys(current,weights,idealBuys,cash){
     return sum+d*d;
   },0);
 
-  // 남은 돈으로 살 수 있는 종목 중, 1주 추가 후 전체 목표오차가 가장 작은 종목을 반복 선택.
-  // 오차가 당장 줄지 않더라도 주문 가능한 현금을 최대한 사용하되, 매 단계 가장 덜 어긋나는 선택을 한다.
+  // 목표오차가 실제로 줄어드는 경우에만 1주씩 추가한다.
   for(let guard=0;guard<10000;guard++){
-    let best=-1,bestError=Infinity;
+    const currentError=error(qty);
+    let best=-1,bestError=currentError;
     for(let i=0;i<costs.length;i++){
       if(costs[i]<=0||costs[i]>remaining+0.01)continue;
-      const test=qty.slice(); test[i]++;
+      const test=qty.slice();test[i]++;
       const e=error(test);
-      if(e<bestError){bestError=e;best=i;}
+      if(e<bestError-0.01){bestError=e;best=i;}
     }
     if(best<0)break;
     qty[best]++;
@@ -352,42 +348,59 @@ function renderRebalance(){
   const brokerRequested=Math.max(0,Number(appData.rebalanceBrokerDeploy)||0);
   const cashRequested=Math.max(0,Number(appData.rebalanceCashDeploy)||0);
   const newMoney=Math.max(0,Number(appData.rebalanceNewDeploy)||0);
-  const rpDeploy=Math.min(rpRequested,rpBalance), brokerDeploy=Math.min(brokerRequested,brokerBalance), cashDeploy=Math.min(cashRequested,cashBalance);
-  const deploy=rpDeploy+brokerDeploy+cashDeploy+newMoney, rpRemaining=rpBalance-rpDeploy, brokerRemaining=brokerBalance-brokerDeploy, cashRemaining=cashBalance-cashDeploy;
-  const total=core+deploy, mode=appData.rebalanceMode||"buyOnly";
+  const rpDeploy=Math.min(rpRequested,rpBalance),brokerDeploy=Math.min(brokerRequested,brokerBalance),cashDeploy=Math.min(cashRequested,cashBalance);
+  const deploy=rpDeploy+brokerDeploy+cashDeploy+newMoney,rpRemaining=rpBalance-rpDeploy,brokerRemaining=brokerBalance-brokerDeploy,cashRemaining=cashBalance-cashDeploy;
+  const mode=appData.rebalanceMode||"buyOnly";
+  const qldState=getQldStrategyState();
 
   document.getElementById("rebalanceDeployTotal").innerText=money(deploy);
   document.getElementById("rebalanceRpRemainingText").innerText=money(rpRemaining);
   document.getElementById("rebalanceBrokerRemainingText").innerText=money(brokerRemaining);
   document.getElementById("rebalanceCashRemainingText").innerText=money(cashRemaining);
-  document.getElementById("rebalanceAfterTotal").innerText=money(total);
 
   let warnings=[];
   if(rpRequested>rpBalance)warnings.push(`외화RP는 보유액 ${money(rpBalance)}까지만 반영`);
   if(brokerRequested>brokerBalance)warnings.push(`예수금은 보유액 ${money(brokerBalance)}까지만 반영`);
   if(cashRequested>cashBalance)warnings.push(`원화현금은 보유액 ${money(cashBalance)}까지만 반영`);
+  if(qldState===false)warnings.push("QQQ 확정 월봉 HA가 빨강: QLD 신규매수 금지, QLD 몫은 외화RP 대기");
+  if(qldState===null)warnings.push("QQQ 월봉 HA 데이터 확인 전: QLD 기본 목표 30%로 계산");
 
   const current=portfolio.map(p=>Number(appData.holdings[p.id])||0);
-  const weights=portfolio.map(p=>p.weight/100);
-  const idealBuys=mode==="buyOnly"?optimalBuyOnly(current,weights,deploy):null;
-  const executable=mode==="buyOnly"?executableWholeShareBuys(current,weights,idealBuys,deploy):null;
+  const qldIndex=portfolio.findIndex(p=>p.id==="qld");
+  const nonQldWeight=0.70;
+  const nonQldCore=current.reduce((s,v,i)=>s+(i===qldIndex?0:v),0);
+  const weights=portfolio.map(p=>p.id==="qld"&&qldState===false?0:p.weight/100);
+
+  // HA OFF에서는 QLD 30%를 외화RP 대기분으로 보고 나머지 70% 슬리브만 계산한다.
+  const targetTotal=qldState===false
+    ? ((nonQldCore+deploy)/nonQldWeight)
+    : (core+deploy);
+
+  const idealBuys=mode==="buyOnly"?optimalBuyOnly(current,weights,deploy,targetTotal):null;
+  const executable=mode==="buyOnly"?executableWholeShareBuys(current,weights,idealBuys,deploy,targetTotal):null;
   const actualSpent=executable?executable.amounts.reduce((a,b)=>a+b,0):deploy;
   const orderRemaining=executable?executable.remaining:0;
-  const actualTotal=core+actualSpent;
+  const strategyReserve=qldState===false?targetTotal*0.30:0;
+
+  document.getElementById("rebalanceAfterTotal").innerText=money(targetTotal);
+
+  const strategyText=qldState===true?"🟢 HA GREEN — QLD 목표 30%":qldState===false?"🔴 HA RED — QLD 목표 0%, 공격자금 RP 대기":"⏳ HA 확인 중";
 
   rebalanceSummary.innerHTML=
     `<b>방식:</b> ${mode==="buyOnly"?"추가매수 — 정수주 최적화":"전체 리밸런싱 — 매도 허용"}<br>`+
-    `<b>현재 목표 포트폴리오:</b> ${money(core)}<br>`+
+    `<b>QLD 전략:</b> ${strategyText}<br>`+
+    `<b>현재 투자자산:</b> ${money(core)}<br>`+
     `<b>투입:</b> 외화RP ${money(rpDeploy)} + 예수금 ${money(brokerDeploy)} + 원화현금 ${money(cashDeploy)} + 신규자금 ${money(newMoney)}<br>`+
     `<b>추가 투자금 합계:</b> ${money(deploy)}<br>`+
     (mode==="buyOnly"?`<b>예상 주문금액:</b> ${money(actualSpent)}<br><b>정수주 주문 후 잔액:</b> ${money(orderRemaining)}<br>`:"")+
-    `<b>투자 후 포트폴리오:</b> ${money(mode==="buyOnly"?actualTotal:total)}<br>`+
+    (qldState===false?`<b>QLD 대기자금 목표(전략상 30%):</b> ${money(strategyReserve)}<br>`:"")+
+    `<b>전략 기준 총액:</b> ${money(targetTotal)}<br>`+
     `<b>기타 투자자산:</b> ${money(other)} (비중 계산 제외)`+
     (warnings.length?`<br><span class="negative"><b>⚠️ ${warnings.join(" / ")}</b></span>`:"");
 
   rebalanceTable.innerHTML="";
   portfolio.forEach((p,i)=>{
-    const currentWeight=core>0?current[i]/core*100:0;
+    const currentWeight=targetTotal>0?current[i]/targetTotal*100:0;
     const priceInfo=marketDataGlobal?.prices?.[p.id]||null;
     const fx=Number(marketDataGlobal?.fx_rate)||0;
     const rawPrice=Number(priceInfo?.price)||0;
@@ -400,13 +413,13 @@ function renderRebalance(){
       qty=executable.qty[i];
       after=current[i]+diff;
     }else{
-      after=total*weights[i];
+      after=targetTotal*weights[i];
       diff=after-current[i];
       qty=krwPerUnit>0?Math.floor(Math.abs(diff)/krwPerUnit):0;
     }
 
-    const denom=mode==="buyOnly"?actualTotal:total;
-    const afterWeight=denom>0?after/denom*100:0;
+    const afterWeight=targetTotal>0?after/targetTotal*100:0;
+    const targetPct=weights[i]*100;
     const priceText=rawPrice>0?(isUSD?`$${rawPrice.toLocaleString(undefined,{maximumFractionDigits:2})}`:money(rawPrice)):"가격 없음";
     const usdAdjust=isUSD&&fx>0?Math.abs(diff)/fx:0;
     const action=Math.abs(diff)<=1?"-":isUSD&&fx>0
@@ -414,91 +427,106 @@ function renderRebalance(){
       : `<span class="${diff>0?"buy":"sell"}">${diff>0?"+":"-"}${money(Math.abs(diff))}</span>`;
     const qtyText=Math.abs(diff)<=1?"-":krwPerUnit>0?`${qty.toLocaleString()}${priceInfo?.unit||"주"}`:"-";
     const displayName=p.id==="brkb"?"BRK.B":p.id==="gold"?"금":p.name;
-    rebalanceTable.insertAdjacentHTML("beforeend",`<tr><td><b>${displayName}</b></td><td>${p.weight}%</td><td>${currentWeight.toFixed(1)}%</td><td>${afterWeight.toFixed(1)}%</td><td>${action}</td><td>${priceText}</td><td><b>${qtyText}</b></td></tr>`);
+    rebalanceTable.insertAdjacentHTML("beforeend",`<tr><td><b>${displayName}</b></td><td>${targetPct.toFixed(targetPct%1?1:0)}%</td><td>${currentWeight.toFixed(1)}%</td><td>${afterWeight.toFixed(1)}%</td><td>${action}</td><td>${priceText}</td><td><b>${qtyText}</b></td></tr>`);
   });
 }
-function saveS5TW(){
-  const v=num("s5twInput");
-  appData.s5tw=v;
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));
-  updateSignal();
-}
 function getTrendMarketData(){
-  // 전략 기준은 QQQ. 구형 data.json에서는 ^NDX 값을 호환용으로 사용.
-  const q=marketDataGlobal?.qqq||marketDataGlobal?.QQQ;
-  const n=q||marketDataGlobal?.ndx||marketDataGlobal?.NDX||{};
+  const q=marketDataGlobal?.qqq||marketDataGlobal?.QQQ||{};
+  const ha=q.ha_monthly||{};
   return {
-    price:Number(n.price ?? n.close)||0,
-    sma120:Number(n.sma_120)||0,
-    sma200:Number(n.sma_200)||0,
-    label:q?"QQQ":"NASDAQ-100 (^NDX, 구형 호환)"
+    price:Number(q.price ?? q.close)||0,
+    sma120:Number(q.sma_120)||0,
+    sma200:Number(q.sma_200)||0,
+    haState:String(ha.state||"").toLowerCase(),
+    haPreviousState:String(ha.previous_state||"").toLowerCase(),
+    haChanged:Boolean(ha.changed),
+    haTransition:String(ha.transition||""),
+    haMonth:String(ha.completed_month||""),
+    haOpen:Number(ha.ha_open)||0,
+    haClose:Number(ha.ha_close)||0,
+    label:"QQQ"
   };
+}
+function getQldStrategyState(){
+  const s=getTrendMarketData().haState;
+  return s==="green"?true:s==="red"?false:null;
 }
 function getVxnMarketData(){
   const v=marketDataGlobal?.vxn||marketDataGlobal?.VXN||{};
-  return {
-    price:Number(v.price ?? v.close)||0,
-    change:Number(v.change)||0,
-    pct:Number(v.pct)||0
-  };
+  return {price:Number(v.price ?? v.close)||0,change:Number(v.change)||0,pct:Number(v.pct)||0};
 }
 function updateSignal(){
-  const status=document.getElementById("signalStatus"), detail=document.getElementById("signalDetail");
+  const status=document.getElementById("signalStatus"),detail=document.getElementById("signalDetail");
   if(!marketDataGlobal){status.className="signal wait";status.innerText="⏳ 시장 데이터 확인 중";detail.innerHTML="";return}
   const n=getTrendMarketData(),v=getVxnMarketData();
-  const price=n.price,m120=n.sma120,m200=n.sma200,s=Number(appData.s5tw)||0;
-  if(!price||!m120||!m200){status.className="signal wait";status.innerText="⏳ QQQ 추세 데이터 부족";detail.innerHTML="QQQ 120일선·200일선 데이터를 확인하지 못했습니다.";return}
-
-  const above120=price>=m120, above200=price>=m200, breadth=s>=30;
-  const structure=m120>m200;
-  const structureText=structure?"✅ 120MA > 200MA":"⚠️ 120MA ≤ 200MA — 회복 구간일 수 있음";
-  let vxnText="VXN 데이터 없음";
-  if(v.price>0){
-    if(v.price>=40)vxnText=`⚠️ VXN ${v.price.toFixed(2)} — 극단 변동성, QLD 비중 축소 검토`;
-    else if(v.price>=30)vxnText=`⚠️ VXN ${v.price.toFixed(2)} — 변동성 주의`;
-    else vxnText=`✅ VXN ${v.price.toFixed(2)} — 변동성 안정권`;
+  if(!n.haState||!n.haMonth){
+    status.className="signal wait";
+    status.innerText="⏳ QQQ 월봉 HA 데이터 부족";
+    detail.innerHTML="자동 업데이트가 한 번 실행되면 확정 월봉 HA 상태가 표시됩니다.";
+    return;
   }
 
-  const common=`<b>${n.label}:</b> ${price.toLocaleString(undefined,{maximumFractionDigits:2})}<br>`+
-    `<b>120MA:</b> ${m120.toLocaleString(undefined,{maximumFractionDigits:2})} · <b>200MA:</b> ${m200.toLocaleString(undefined,{maximumFractionDigits:2})}<br>`+
-    `<b>추세 구조:</b> ${structureText}<br>`+
-    `<b>S5TW:</b> ${s>0?s.toFixed(2)+"%":"미입력"}<br>`+
-    `<b>보조 위험:</b> ${vxnText}`;
+  const stateText=n.haState==="green"?"초록 🟢":"빨강 🔴";
+  const prevText=n.haPreviousState==="green"?"초록":n.haPreviousState==="red"?"빨강":"-";
+  const transition=n.haTransition==="red_to_green"?"🔄 빨강 → 초록 전환":n.haTransition==="green_to_red"?"🔄 초록 → 빨강 전환":"색 유지";
+  const maRef=n.sma120&&n.sma200
+    ? `<b>참고 120/200일선:</b> ${n.sma120.toLocaleString(undefined,{maximumFractionDigits:2})} / ${n.sma200.toLocaleString(undefined,{maximumFractionDigits:2})}<br>`
+    : "";
+  const vxnRef=v.price?`<b>참고 VXN:</b> ${v.price.toFixed(2)}<br>`:"";
+  const common=
+    `<b>확정 월:</b> ${n.haMonth}<br>`+
+    `<b>QQQ 월봉 HA:</b> ${stateText} · 이전 ${prevText} · ${transition}<br>`+
+    `<b>QQQ:</b> ${n.price?n.price.toLocaleString(undefined,{maximumFractionDigits:2}):"-"}<br>`+
+    maRef+vxnRef+
+    `<span class="note">현재 진행 중인 월봉은 신호에서 제외합니다.</span>`;
 
-  if(s<=0){
-    status.className="signal wait";status.innerText="✍️ S5TW 입력 필요";
-    detail.innerHTML=common+"<br><br>S5TW를 입력하면 QLD 상태를 판정합니다.";return;
+  if(n.haState==="green"){
+    status.className="signal buySignal";
+    status.innerText="🟢 QLD ON — 목표비중 30% 보유";
+    detail.innerHTML=common+"<br><br><b>행동:</b> QLD 30% 슬리브를 보유. 다음 확정 월봉이 빨강으로 바뀔 때까지 월중 변동은 무시.";
+  }else{
+    status.className="signal risk";
+    status.innerText="🔴 QLD OFF — 외화RP 대기";
+    detail.innerHTML=common+"<br><br><b>행동:</b> QLD를 정리하고 공격자금은 외화RP에서 대기. 다음 확정 월봉이 초록이면 재진입.";
   }
-  if(!above200){
-    status.className="signal risk";status.innerText="🔴 QLD OFF — 중장기 추세 이탈";
-    detail.innerHTML=common+"<br><br><b>행동:</b> QLD 신규매수 금지. 보유분은 우선 축소·정리하고 외화RP 대기를 검토.";return;
-  }
-  if(!above120){
-    status.className="signal risk";status.innerText="🔴 QLD OFF — 120일선 이탈";
-    detail.innerHTML=common+"<br><br><b>행동:</b> QLD 신규매수 금지. 보유분 축소·매도 검토.";return;
-  }
-  if(!breadth){
-    status.className="signal wait";status.innerText="🟡 QLD OFF — 시장 폭 부족";
-    detail.innerHTML=common+"<br><br><b>행동:</b> QQQ 추세는 유지 중이지만 S5TW가 30 미만. 신규 QLD 매수는 기다리고 보유분은 축소·매도 검토.";return;
-  }
-
-  status.className="signal buySignal";status.innerText="🟢 QLD ON — 매수·보유 가능";
-  detail.innerHTML=common+"<br><br><b>조건 충족:</b> QQQ가 120·200일선 위 + S5TW 30 이상. VXN은 보조 위험지표이므로 단독 매매 신호로 사용하지 않음.";
 }
 async function loadMarketData(){
   try{
     const r=await fetch("data.json?t="+Date.now());if(!r.ok)throw 0;
     marketDataGlobal=await r.json();
-    const n=getTrendMarketData(),v=getVxnMarketData(),p=n.price,a=n.sma120,b=n.sma200,fx=Number(marketDataGlobal.fx_rate)||0;
+    const n=getTrendMarketData(),v=getVxnMarketData(),fx=Number(marketDataGlobal.fx_rate)||0;
     const prices=marketDataGlobal.prices||{};
     const priceLine=["qld","qqq","voo","brkb","visa"].map(id=>{const x=prices[id];return x?.price?`${id==="brkb"?"BRK.B":id.toUpperCase()} $${Number(x.price).toLocaleString(undefined,{maximumFractionDigits:2})}`:null}).filter(Boolean).join(" · ");
-    const structure=p&&a&&b?(a>b?"✅ 120MA > 200MA":"⚠️ 120MA ≤ 200MA"):"⏳ 데이터 부족";
-    marketData.innerHTML=`<b>최종 업데이트:</b> ${marketDataGlobal.updated_at||"-"}<br><b>${n.label}:</b> ${p?p.toLocaleString(undefined,{maximumFractionDigits:2}):"-"}<br><b>120일선:</b> ${a?a.toLocaleString(undefined,{maximumFractionDigits:2}):"-"}<br><b>200일선:</b> ${b?b.toLocaleString(undefined,{maximumFractionDigits:2}):"-"}<br><b>이평 구조:</b> ${structure}<br><b>VXN:</b> ${v.price?v.price.toLocaleString(undefined,{maximumFractionDigits:2}):"-"}<br><b>USD/KRW:</b> ${fx?fx.toLocaleString()+"원":"-"}<br><b>주가:</b> ${priceLine||"-"}`;
+    const haText=n.haState==="green"?"🟢 GREEN · QLD ON":n.haState==="red"?"🔴 RED · QLD OFF":"⏳ 데이터 없음";
+    marketData.innerHTML=
+      `<b>최종 업데이트:</b> ${marketDataGlobal.updated_at||"-"}<br>`+
+      `<b>QQQ 확정 월봉 HA:</b> ${haText} ${n.haMonth?`(${n.haMonth})`:""}<br>`+
+      `<b>QQQ:</b> ${n.price?n.price.toLocaleString(undefined,{maximumFractionDigits:2}):"-"}<br>`+
+      `<b>참고 120일선 / 200일선:</b> ${n.sma120?n.sma120.toLocaleString(undefined,{maximumFractionDigits:2}):"-"} / ${n.sma200?n.sma200.toLocaleString(undefined,{maximumFractionDigits:2}):"-"}<br>`+
+      `<b>VXN:</b> ${v.price?v.price.toLocaleString(undefined,{maximumFractionDigits:2}):"-"}<br>`+
+      `<b>USD/KRW:</b> ${fx?fx.toLocaleString()+"원":"-"}<br>`+
+      `<b>주가:</b> ${priceLine||"-"}`;
     updateSignal();renderRebalance();
-  }catch{marketData.innerHTML="⚠️ data.json을 불러오지 못했습니다."}
+  }catch{
+    marketData.innerHTML="⚠️ data.json을 불러오지 못했습니다.";
+    updateSignal();
+  }
 }
 
-function addTrade(){const date=tradeDate.value,ticker=tradeTicker.value,type=tradeType.value,amount=num("tradeAmount"),memo=tradeMemo.value.trim();if(!date||!amount)return alert("날짜와 거래금액을 입력하세요.");const trend=getTrendMarketData(),v=getVxnMarketData();appData.trades.unshift({id:Date.now(),date,ticker,type,amount,memo,s5tw:appData.s5tw||null,qqq:trend.price||null,vxn:v.price||null,ndx:trend.label.startsWith("NASDAQ")?trend.price:null});localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));tradeAmount.value="";tradeMemo.value="";renderTrades()}
+function addTrade(){
+  const date=tradeDate.value,ticker=tradeTicker.value,type=tradeType.value,amount=num("tradeAmount"),memo=tradeMemo.value.trim();
+  if(!date||!amount)return alert("날짜와 거래금액을 입력하세요.");
+  const trend=getTrendMarketData(),v=getVxnMarketData();
+  appData.trades.unshift({
+    id:Date.now(),date,ticker,type,amount,memo,
+    qqq:trend.price||null,
+    qqqHa:trend.haState||null,
+    qqqHaMonth:trend.haMonth||null,
+    vxn:v.price||null
+  });
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));
+  tradeAmount.value="";tradeMemo.value="";renderTrades();
+}
 function deleteTrade(id){appData.trades=appData.trades.filter(x=>x.id!==id);localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));renderTrades()}
 function renderTrades(){tradeTable.innerHTML=appData.trades.length?"":`<tr><td colspan="6" style="text-align:center;color:#777">기록 없음</td></tr>`;appData.trades.forEach(t=>tradeTable.insertAdjacentHTML("beforeend",`<tr><td>${t.date}</td><td>${t.ticker}</td><td>${t.type}</td><td>${money(t.amount)}</td><td style="text-align:left">${escapeHtml(t.memo||"-")}</td><td><button class="smallbtn delete" onclick="deleteTrade(${t.id})">삭제</button></td></tr>`))}
 function addSnapshot(){saveAll();const date=new Date().toISOString().slice(0,10),value=getNetWorth(),ex=appData.snapshots.find(s=>s.date===date);if(ex)ex.value=value;else appData.snapshots.push({id:Date.now(),date,value});appData.snapshots.sort((a,b)=>a.date.localeCompare(b.date));localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));renderSnapshots()}
