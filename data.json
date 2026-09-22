@@ -1,9 +1,9 @@
 {
-    "updated_at": "2026-09-23 05:33:51 KST",
+    "updated_at": "2026-09-23 08:20:11 KST",
     "strategy_version": "qqq_monthly_heikin_ashi_v1",
-    "fx_rate": 1354.18,
-    "fx_change": -30.68,
-    "fx_pct": -2.22,
+    "fx_rate": 1355.42,
+    "fx_change": -18.26,
+    "fx_pct": -1.33,
     "qqq": {
         "price": 747.46,
         "change": 5.99,
@@ -32,7 +32,7 @@
             "price": 97.83,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-09-23 05:33:51 KST"
+            "updated_at": "2026-09-23 08:20:11 KST"
         },
         "qqq": {
             "ticker": "QQQ",
@@ -40,7 +40,7 @@
             "price": 747.465,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-09-23 05:33:51 KST"
+            "updated_at": "2026-09-23 08:20:11 KST"
         },
         "voo": {
             "ticker": "VOO",
@@ -48,7 +48,7 @@
             "price": 712.66,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-09-23 05:33:51 KST"
+            "updated_at": "2026-09-23 08:20:11 KST"
         },
         "brkb": {
             "ticker": "BRK-B",
@@ -56,7 +56,7 @@
             "price": 503.61,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-09-23 05:33:51 KST"
+            "updated_at": "2026-09-23 08:20:11 KST"
         },
         "visa": {
             "ticker": "V",
@@ -64,19 +64,19 @@
             "price": 362.14,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-09-23 05:33:51 KST"
+            "updated_at": "2026-09-23 08:20:11 KST"
         },
         "gold": {
             "ticker": "04020000",
             "name": "금 99.99_1kg",
-            "price": 193370.0,
+            "price": 189120.0,
             "currency": "KRW",
             "unit": "g",
-            "market_date": "20260921",
-            "change": -1940.0,
-            "pct": -0.99,
+            "market_date": "20260922",
+            "change": -4250.0,
+            "pct": -2.2,
             "status": "ok",
-            "updated_at": "2026-09-23 05:33:51 KST"
+            "updated_at": "2026-09-23 08:20:11 KST"
         }
     }
 }
