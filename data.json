@@ -1,15 +1,15 @@
 {
-    "updated_at": "2026-09-23 02:47:42 KST",
+    "updated_at": "2026-09-23 05:33:51 KST",
     "strategy_version": "qqq_monthly_heikin_ashi_v1",
-    "fx_rate": 1358.64,
-    "fx_change": -26.22,
-    "fx_pct": -1.89,
+    "fx_rate": 1354.18,
+    "fx_change": -30.68,
+    "fx_pct": -2.22,
     "qqq": {
-        "price": 745.23,
-        "change": 3.76,
-        "pct": 0.51,
-        "sma_120": 698.49,
-        "sma_200": 662.32,
+        "price": 747.46,
+        "change": 5.99,
+        "pct": 0.81,
+        "sma_120": 698.51,
+        "sma_200": 662.33,
         "ha_monthly": {
             "state": "green",
             "previous_state": "green",
@@ -21,50 +21,50 @@
         }
     },
     "vxn": {
-        "price": 19.87,
-        "change": -0.52,
-        "pct": -2.55
+        "price": 20.18,
+        "change": -0.21,
+        "pct": -1.03
     },
     "prices": {
         "qld": {
             "ticker": "QLD",
             "name": "QLD",
-            "price": 97.3,
+            "price": 97.83,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-09-23 02:47:42 KST"
+            "updated_at": "2026-09-23 05:33:51 KST"
         },
         "qqq": {
             "ticker": "QQQ",
             "name": "QQQ",
-            "price": 745.23,
+            "price": 747.465,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-09-23 02:47:42 KST"
+            "updated_at": "2026-09-23 05:33:51 KST"
         },
         "voo": {
             "ticker": "VOO",
             "name": "VOO",
-            "price": 712.7,
+            "price": 712.66,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-09-23 02:47:42 KST"
+            "updated_at": "2026-09-23 05:33:51 KST"
         },
         "brkb": {
             "ticker": "BRK-B",
             "name": "BRK.B",
-            "price": 504.12,
+            "price": 503.61,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-09-23 02:47:42 KST"
+            "updated_at": "2026-09-23 05:33:51 KST"
         },
         "visa": {
             "ticker": "V",
             "name": "Visa",
-            "price": 363.45,
+            "price": 362.14,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-09-23 02:47:42 KST"
+            "updated_at": "2026-09-23 05:33:51 KST"
         },
         "gold": {
             "ticker": "04020000",
@@ -76,7 +76,7 @@
             "change": -1940.0,
             "pct": -0.99,
             "status": "ok",
-            "updated_at": "2026-09-23 02:47:42 KST"
+            "updated_at": "2026-09-23 05:33:51 KST"
         }
     }
 }
