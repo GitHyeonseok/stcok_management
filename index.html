@@ -690,20 +690,11 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":
 
 function previewImage(e){const f=e.target.files[0];if(!f)return;const img=imagePreview;img.src=URL.createObjectURL(f);img.classList.remove("hidden");aiResult.classList.add("hidden")}
 async function fileToCompressedDataUrl(file){
-  const bitmap=await createImageBitmap(file);
-  const max=3200,scale=Math.min(1,max/Math.max(bitmap.width,bitmap.height));
-  const c=document.createElement("canvas");
-  c.width=Math.max(1,Math.round(bitmap.width*scale));
-  c.height=Math.max(1,Math.round(bitmap.height*scale));
-  const ctx=c.getContext("2d",{alpha:false});
-  ctx.imageSmoothingEnabled=true;
-  ctx.imageSmoothingQuality="high";
-  ctx.drawImage(bitmap,0,0,c.width,c.height);
+  const bitmap=await createImageBitmap(file),max=2000,scale=Math.min(1,max/Math.max(bitmap.width,bitmap.height));
+  const c=document.createElement("canvas");c.width=Math.round(bitmap.width*scale);c.height=Math.round(bitmap.height*scale);
+  c.getContext("2d").drawImage(bitmap,0,0,c.width,c.height);
   bitmap.close();
-  // 스크린샷의 작은 숫자/OCR 정확도를 위해 PNG를 우선 사용한다.
-  // 지나치게 큰 이미지만 고품질 JPEG로 내려서 전송량을 제한한다.
-  const pixels=c.width*c.height;
-  return pixels<=9000000?c.toDataURL("image/png"):c.toDataURL("image/jpeg",0.95);
+  return c.toDataURL("image/jpeg",0.88);
 }
 async function analyzeScreenshot(){
   const file=assetImage.files[0],url=workerUrl.value.trim().replace(/\/+$/,"");
@@ -747,7 +738,7 @@ function inferCanonicalFromLabel(label,currentId){
 }
 function renderRecognized(data){
   document.getElementById("recognizedAssets").innerHTML="";
-  recognizedAssets=(data.assets||[]).map(a=>({...a,canonical_id:(a.canonical_id==="otherAsset"?"otherInvestment":inferCanonicalFromLabel(a.source_label,a.canonical_id))}));
+  recognizedAssets=(data.assets||[]).map(a=>({...a,canonical_id:inferCanonicalFromLabel(a.source_label,a.canonical_id)}));
   recognizedAssets.forEach((a,i)=>recognizedAssetsEl(i,a));
   const warnings=data.warnings||[];
   aiWarnings.innerHTML=warnings.length?`<div class="warn"><b>확인 필요</b><br>${warnings.map(escapeHtml).join("<br>")}</div>`:"";
