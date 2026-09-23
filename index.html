@@ -58,11 +58,11 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:.78rem;marg
 .asset-row{display:grid;grid-template-columns:1.25fr 1fr .65fr;gap:8px;align-items:end;margin-top:8px}.warn{background:var(--amber-soft);border:1px solid color-mix(in srgb,var(--amber) 20%,transparent);border-radius:12px;padding:11px;margin-top:8px;font-size:.78rem}.smallbtn{width:auto;padding:6px 9px;margin:0;font-size:.7rem;box-shadow:none}.delete{background:#dc2626}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.chip{width:auto;margin:0;padding:7px 10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);font-size:.7rem;font-weight:800;box-shadow:none}.chip:hover,.chip.active{background:var(--primary-soft);color:var(--primary);border-color:color-mix(in srgb,var(--primary) 25%,transparent)}
 .source-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.source-card{padding:14px;border:1px solid var(--line);border-radius:17px;background:var(--surface-2)}.source-card label{margin-top:0}.source-balance{font-size:.7rem;color:var(--muted);margin-top:5px}.source-balance b{color:var(--text)}
-.section-split{display:grid;grid-template-columns:1fr 1fr;gap:14px}.satellite-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;background:var(--primary-soft);color:var(--primary);font-size:.68rem;font-weight:800}.secondary{font-size:.68rem;color:var(--muted);margin-top:3px}.money-input{text-align:right;font-variant-numeric:tabular-nums}.settlement{background:var(--red-soft);border-color:color-mix(in srgb,var(--red) 14%,transparent)}
+.section-split{display:grid;grid-template-columns:1fr 1fr;gap:14px}.satellite-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;background:var(--primary-soft);color:var(--primary);font-size:.68rem;font-weight:800}.secondary{font-size:.68rem;color:var(--muted);margin-top:3px}.money-input{text-align:left;font-variant-numeric:tabular-nums;padding-left:14px}.settlement{background:var(--red-soft);border-color:color-mix(in srgb,var(--red) 14%,transparent)}
 details.card{padding:0;overflow:hidden}details.card>summary{list-style:none;cursor:pointer;padding:18px 20px;font-weight:850;font-size:.98rem;display:flex;justify-content:space-between;align-items:center}details.card>summary::-webkit-details-marker{display:none}details.card>summary:after{content:'+';font-size:1.2rem;color:var(--muted)}details.card[open]>summary:after{content:'−'}details.card>.details-body{padding:0 20px 20px;border-top:1px solid var(--line)}
 @media(max-width:850px){.hero{grid-template-columns:1fr}.hero-side{grid-template-columns:repeat(3,1fr)}.summary-grid{grid-template-columns:1fr 1fr}.source-grid,.grid3,.grid4{grid-template-columns:1fr 1fr}.section-split{grid-template-columns:1fr}}
 @media(max-width:620px){
-.container{padding:10px 10px 60px}.topbar{top:6px}.brand-sub{display:none}.header{padding:0 4px}.hero-main{padding:20px}.hero-side{grid-template-columns:1fr 1fr}.hero-side .metric:last-child{grid-column:1/-1}.grid2,.grid3,.grid4,.source-grid{grid-template-columns:1fr}.summary-grid{grid-template-columns:1fr 1fr}.card{padding:16px;border-radius:18px}.asset-row{grid-template-columns:1fr 1fr}.asset-row .wide{grid-column:1/-1}table{font-size:.72rem}.currency-toggle button{padding:6px 8px}.hero-value{font-size:2.15rem}
+.container{padding:10px 10px 60px}.topbar{top:6px}.brand-sub{display:none}.header{padding:8px 6px 0;margin:16px 2px 20px}.header h1{font-size:clamp(1.55rem,7vw,2.1rem);line-height:1.18;max-width:11ch}.header p{margin-top:8px;font-size:.84rem;max-width:33ch;line-height:1.6}.keep-together{white-space:nowrap}.hero-main{padding:20px}.hero-side{grid-template-columns:1fr 1fr}.hero-side .metric:last-child{grid-column:1/-1}.grid2,.grid3,.grid4,.source-grid{grid-template-columns:1fr}.summary-grid{grid-template-columns:1fr 1fr}.card{padding:16px;border-radius:18px}.asset-row{grid-template-columns:1fr 1fr}.asset-row .wide{grid-column:1/-1}table{font-size:.72rem}.currency-toggle button{padding:6px 8px}.hero-value{font-size:2.15rem}
 /* 모바일 보유자산 입력: 좁은 4열 표 대신 카드형 2열 배치 */
 .holdings-scroll,.satellite-scroll{overflow:visible;padding:0 10px}
 .holdings-table,.satellite-table{display:block;width:100%;margin-top:0}
@@ -79,9 +79,24 @@ details.card{padding:0;overflow:hidden}details.card>summary{list-style:none;curs
 .satellite-table td:nth-child(3)::before{content:'현재가';}
 .satellite-table td:nth-child(4)::before{content:'전체 비중';}
 .holdings-table td:nth-child(n+2)::before,.satellite-table td:nth-child(n+2)::before{display:block;margin-bottom:5px;color:var(--muted);font-size:.63rem;font-weight:750;letter-spacing:-.01em}
-.holdings-table .money-input,.satellite-table .money-input{width:100%;min-width:0;padding:10px 10px;font-size:.82rem;text-align:right;letter-spacing:-.025em}
+.holdings-table .money-input,.satellite-table .money-input{width:100%;min-width:0;padding:10px 10px;font-size:.82rem;text-align:left;letter-spacing:-.025em}
 .holdings-table td:nth-child(4),.satellite-table td:nth-child(3),.satellite-table td:nth-child(4){font-size:.8rem;font-weight:700;padding-top:1px}
 }
+
+/* 금액 입력값은 모든 화면에서 입력칸 왼쪽부터 표시 */
+.money-input,
+input[inputmode="numeric"],
+input[inputmode="decimal"]{
+  text-align:left !important;
+  direction:ltr !important;
+  padding-left:12px !important;
+  padding-right:12px !important;
+}
+.holdings-table .money-input,
+.satellite-table .money-input{
+  text-align:left !important;
+}
+
 </style>
 </head>
 <body>
@@ -90,7 +105,7 @@ details.card{padding:0;overflow:hidden}details.card>summary{list-style:none;curs
   <div class="brand"><div class="brand-mark">W</div><div><div class="brand-title">Wealth Console</div><div class="brand-sub">자금 흐름 · 포트폴리오 · 리밸런싱</div></div></div>
   <div class="currency-toggle"><button id="krwToggle" class="active" onclick="setDisplayCurrency('KRW')">₩ KRW</button><button id="usdToggle" onclick="setDisplayCurrency('USD')">$ USD</button></div>
 </div>
-<div class="header"><h1>내 돈이 지금 어디에 있는지, 한 화면에서.</h1><p>실질 순자산과 사용 가능한 자금은 결제·환전 대기 금액을 중복 제거해서 계산합니다.</p></div>
+<div class="header"><h1>내 돈이 지금 어디에 있는지,<br><span class="keep-together">한 화면에서.</span></h1><p>실질 순자산과 사용 가능한 자금은 결제·환전 대기 금액을 중복 제거해서 계산합니다.</p></div>
 
 
 
@@ -707,9 +722,32 @@ async function analyzeScreenshot(){
   finally{aiLoading.classList.add("hidden")}
 }
 const assetNames={qld:"QLD",qqq:"QQQ",voo:"VOO",brkb:"버크셔 B",visa:"Visa",gold:"KRX 금",tsm:"TSMC",tem:"Tempus AI",cashKRW:"원화 현금",brokerCash:"증권계좌 예수금",foreignRP:"외화RP",emergency:"비상금",plannedExpense:"예정지출",otherInvestment:"기타 투자자산",unknown:"분류 불가"};
+function inferCanonicalFromLabel(label,currentId){
+  if(currentId && currentId!=="unknown")return currentId;
+  const x=String(label||"").toLowerCase()
+    .replace(/\\/g,"")
+    .replace(/&amp;/g,"&")
+    .replace(/[_]+/g," ")
+    .replace(/\s+/g," ")
+    .trim();
+  if(x==="qld"||x.includes("proshares ultra qqq"))return "qld";
+  if(x==="qqq"||x.includes("invesco qqq"))return "qqq";
+  if(x==="voo"||x.includes("vanguard s&p 500")||x.includes("vanguard s and p 500")||x.includes("vanguard 500")||(x.includes("vanguard")&&x.includes("500")&&x.includes("etf")))return "voo";
+  if(x.includes("berkshire")||x.includes("brk.b")||x.includes("버크셔"))return "brkb";
+  if(x==="visa"||x.includes("visa inc")||x.includes("비자"))return "visa";
+  if(x==="tsm"||x==="tsmc"||x.includes("tsmc")||x.includes("taiwan semiconductor")||x.includes("대만반도체"))return "tsm";
+  if(x==="tem"||x.includes("tempus"))return "tem";
+  if(x.includes("krx 금")||x.includes("금현물")||x.includes("금 현물")||x.includes("금 99")||/99(?:\.99)?\s*1?kg/.test(x)||/99(?:\.99)?\s*g/.test(x))return "gold";
+  if(x.includes("외화약정rp")||x.includes("외화rp")||x.includes("usd rp"))return "foreignRP";
+  if(x.includes("예수금")||x.includes("원화예수금")||x.includes("증권계좌 예수금"))return "brokerCash";
+  if(x.includes("원화 현금")||x.includes("일반 현금")||x==="현금"||x.includes("현금/통장")||x.includes("현금 / 통장")||x.includes("은행 현금"))return "cashKRW";
+  if(x.includes("비상금"))return "emergency";
+  if(x.includes("예정지출")||x.includes("예정 지출"))return "plannedExpense";
+  return "unknown";
+}
 function renderRecognized(data){
   document.getElementById("recognizedAssets").innerHTML="";
-  recognizedAssets=(data.assets||[]);
+  recognizedAssets=(data.assets||[]).map(a=>({...a,canonical_id:inferCanonicalFromLabel(a.source_label,a.canonical_id)}));
   recognizedAssets.forEach((a,i)=>recognizedAssetsEl(i,a));
   const warnings=data.warnings||[];
   aiWarnings.innerHTML=warnings.length?`<div class="warn"><b>확인 필요</b><br>${warnings.map(escapeHtml).join("<br>")}</div>`:"";
