@@ -61,7 +61,27 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:.78rem;marg
 .section-split{display:grid;grid-template-columns:1fr 1fr;gap:14px}.satellite-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;background:var(--primary-soft);color:var(--primary);font-size:.68rem;font-weight:800}.secondary{font-size:.68rem;color:var(--muted);margin-top:3px}.money-input{text-align:right;font-variant-numeric:tabular-nums}.settlement{background:var(--red-soft);border-color:color-mix(in srgb,var(--red) 14%,transparent)}
 details.card{padding:0;overflow:hidden}details.card>summary{list-style:none;cursor:pointer;padding:18px 20px;font-weight:850;font-size:.98rem;display:flex;justify-content:space-between;align-items:center}details.card>summary::-webkit-details-marker{display:none}details.card>summary:after{content:'+';font-size:1.2rem;color:var(--muted)}details.card[open]>summary:after{content:'−'}details.card>.details-body{padding:0 20px 20px;border-top:1px solid var(--line)}
 @media(max-width:850px){.hero{grid-template-columns:1fr}.hero-side{grid-template-columns:repeat(3,1fr)}.summary-grid{grid-template-columns:1fr 1fr}.source-grid,.grid3,.grid4{grid-template-columns:1fr 1fr}.section-split{grid-template-columns:1fr}}
-@media(max-width:620px){.container{padding:10px 10px 60px}.topbar{top:6px}.brand-sub{display:none}.header{padding:0 4px}.hero-main{padding:20px}.hero-side{grid-template-columns:1fr 1fr}.hero-side .metric:last-child{grid-column:1/-1}.grid2,.grid3,.grid4,.source-grid{grid-template-columns:1fr}.summary-grid{grid-template-columns:1fr 1fr}.card{padding:16px;border-radius:18px}.asset-row{grid-template-columns:1fr 1fr}.asset-row .wide{grid-column:1/-1}table{font-size:.72rem}.currency-toggle button{padding:6px 8px}.hero-value{font-size:2.15rem}}
+@media(max-width:620px){
+.container{padding:10px 10px 60px}.topbar{top:6px}.brand-sub{display:none}.header{padding:0 4px}.hero-main{padding:20px}.hero-side{grid-template-columns:1fr 1fr}.hero-side .metric:last-child{grid-column:1/-1}.grid2,.grid3,.grid4,.source-grid{grid-template-columns:1fr}.summary-grid{grid-template-columns:1fr 1fr}.card{padding:16px;border-radius:18px}.asset-row{grid-template-columns:1fr 1fr}.asset-row .wide{grid-column:1/-1}table{font-size:.72rem}.currency-toggle button{padding:6px 8px}.hero-value{font-size:2.15rem}
+/* 모바일 보유자산 입력: 좁은 4열 표 대신 카드형 2열 배치 */
+.holdings-scroll,.satellite-scroll{overflow:visible;padding:0 10px}
+.holdings-table,.satellite-table{display:block;width:100%;margin-top:0}
+.holdings-table thead,.satellite-table thead{display:none}
+.holdings-table tbody,.satellite-table tbody{display:block;width:100%}
+.holdings-table tr,.satellite-table tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px 12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.holdings-table tr:last-child,.satellite-table tr:last-child{border-bottom:0}
+.holdings-table td,.satellite-table td{display:block;border:0;padding:0;text-align:left!important;white-space:normal;min-width:0}
+.holdings-table td:first-child,.satellite-table td:first-child{grid-column:1/-1;font-size:.86rem;padding-bottom:2px}
+.holdings-table td:nth-child(2)::before{content:'목표';}
+.holdings-table td:nth-child(3)::before{content:'현재 평가금액';}
+.holdings-table td:nth-child(4)::before{content:'USD 환산';}
+.satellite-table td:nth-child(2)::before{content:'현재 평가금액';}
+.satellite-table td:nth-child(3)::before{content:'현재가';}
+.satellite-table td:nth-child(4)::before{content:'전체 비중';}
+.holdings-table td:nth-child(n+2)::before,.satellite-table td:nth-child(n+2)::before{display:block;margin-bottom:5px;color:var(--muted);font-size:.63rem;font-weight:750;letter-spacing:-.01em}
+.holdings-table .money-input,.satellite-table .money-input{width:100%;min-width:0;padding:10px 10px;font-size:.82rem;text-align:right;letter-spacing:-.025em}
+.holdings-table td:nth-child(4),.satellite-table td:nth-child(3),.satellite-table td:nth-child(4){font-size:.8rem;font-weight:700;padding-top:1px}
+}
 </style>
 </head>
 <body>
@@ -133,9 +153,9 @@ details.card{padding:0;overflow:hidden}details.card>summary{list-style:none;curs
 </div><div class="card">
 <div class="card-head"><div><div class="eyebrow">Portfolio</div><h2>투자자산 보유 현황</h2></div><span class="satellite-badge">코어 / 위성 분리</span></div>
 <h3>코어 포트폴리오</h3>
-<div class="scroll"><table><thead><tr><th>종목</th><th>목표</th><th>현재 평가금액</th><th>USD 환산</th></tr></thead><tbody id="holdingInputs"></tbody></table></div>
+<div class="scroll holdings-scroll"><table class="holdings-table"><thead><tr><th>종목</th><th>목표</th><th>현재 평가금액</th><th>USD 환산</th></tr></thead><tbody id="holdingInputs"></tbody></table></div>
 <h3>개별주 · 위성 포지션 <span class="satellite-badge">리밸런싱 제외</span></h3>
-<div class="scroll"><table><thead><tr><th>종목</th><th>현재 평가금액</th><th>현재가</th><th>전체 투자자산 비중</th></tr></thead><tbody id="satelliteInputs"></tbody></table></div>
+<div class="scroll satellite-scroll"><table class="satellite-table"><thead><tr><th>종목</th><th>현재 평가금액</th><th>현재가</th><th>전체 투자자산 비중</th></tr></thead><tbody id="satelliteInputs"></tbody></table></div>
 <p class="note">TSMC와 Tempus AI는 코어 목표비중 계산에서 제외합니다. 보유 현황과 전체 투자자산 대비 비중만 추적합니다.</p>
 <button onclick="saveAll()">보유자산 저장</button>
 </div><div class="card">
@@ -672,19 +692,15 @@ async function analyzeScreenshot(){
     const r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({imageDataUrl})});
     const data=await r.json();
     if(!r.ok)throw new Error(data.detail||data.error||"분석 실패");
-    recognizedAssets=(data.assets||[]).map(a=>a.canonical_id==="otherAsset"?{...a,canonical_id:"otherInvestment"}:a);
+    recognizedAssets=(data.assets||[]);
     renderRecognized(data);
   }catch(e){alert("분석 실패: "+e.message)}
   finally{aiLoading.classList.add("hidden")}
 }
-const assetNames={qld:"QLD",qqq:"QQQ",voo:"VOO",brkb:"버크셔 B",visa:"Visa",gold:"KRX 금",tsm:"TSMC",tem:"Tempus AI",cashKRW:"원화 현금",brokerCash:"증권계좌 예수금",foreignRP:"외화RP",emergency:"비상금",plannedExpense:"예정지출",otherAsset:"기타 자산",otherInvestment:"기타 투자자산",unknown:"분류 불가"};
+const assetNames={qld:"QLD",qqq:"QQQ",voo:"VOO",brkb:"버크셔 B",visa:"Visa",gold:"KRX 금",tsm:"TSMC",tem:"Tempus AI",cashKRW:"원화 현금",brokerCash:"증권계좌 예수금",foreignRP:"외화RP",emergency:"비상금",plannedExpense:"예정지출",otherInvestment:"기타 투자자산",unknown:"분류 불가"};
 function renderRecognized(data){
   document.getElementById("recognizedAssets").innerHTML="";
-  recognizedAssets=(data.assets||[]).map(a=>
-    a.canonical_id==="otherAsset"
-      ? {...a,canonical_id:"otherInvestment"}
-      : a
-  );
+  recognizedAssets=(data.assets||[]);
   recognizedAssets.forEach((a,i)=>recognizedAssetsEl(i,a));
   const warnings=data.warnings||[];
   aiWarnings.innerHTML=warnings.length?`<div class="warn"><b>확인 필요</b><br>${warnings.map(escapeHtml).join("<br>")}</div>`:"";
@@ -709,7 +725,7 @@ function applyRecognizedAssets(){
       appData.holdings[id]=mode==="add"?(Number(appData.holdings[id])||0)+amount:amount;
     }else if(["tsm","tem"].includes(id)){
       appData.satelliteHoldings[id]=mode==="add"?(Number(appData.satelliteHoldings[id])||0)+amount:amount;
-    }else if(["cashKRW","brokerCash","foreignRP","emergency","plannedExpense","otherAsset","otherInvestment"].includes(id)){
+    }else if(["cashKRW","brokerCash","foreignRP","emergency","plannedExpense","otherInvestment"].includes(id)){
       appData[id]=mode==="add"?(Number(appData[id])||0)+amount:amount;
     }
   }
