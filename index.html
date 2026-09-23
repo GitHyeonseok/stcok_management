@@ -511,6 +511,26 @@ function renderRebalance(){
   const rpBalance=Math.max(0,Number(appData.foreignRP)||0);
   const brokerBalance=getAvailableBrokerCash();
   const cashBalance=Math.max(0,Number(appData.cashKRW)||0);
+
+  // 과거 MAX 값이 현재 실제 가용액보다 크면 자동으로 현재 한도까지 낮춘다.
+  // 사용자가 75/50/25%처럼 더 작은 값을 선택한 경우에는 그대로 유지한다.
+  const deployFields=[
+    ["rebalanceRpDeploy",rpBalance],
+    ["rebalanceBrokerDeploy",brokerBalance],
+    ["rebalanceCashDeploy",cashBalance]
+  ];
+  let corrected=false;
+  deployFields.forEach(([key,balance])=>{
+    const current=Math.max(0,Number(appData[key])||0);
+    if(current>balance){
+      appData[key]=balance;
+      const el=document.getElementById(key);
+      if(el)el.value=formatMoneyText(balance);
+      corrected=true;
+    }
+  });
+  if(corrected)localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));
+
   const rpRequested=Math.max(0,Number(appData.rebalanceRpDeploy)||0);
   const brokerRequested=Math.max(0,Number(appData.rebalanceBrokerDeploy)||0);
   const cashRequested=Math.max(0,Number(appData.rebalanceCashDeploy)||0);
@@ -522,7 +542,11 @@ function renderRebalance(){
 
   const badge=document.getElementById("rebalanceAvailableBadge");if(badge)badge.innerText="가용자금 "+money(rpBalance+brokerBalance+cashBalance);
   const rb=document.getElementById("rpSourceBalance"),bb=document.getElementById("brokerSourceBalance"),cb=document.getElementById("cashSourceBalance");
-  if(rb)rb.innerText=money(rpBalance);if(bb)bb.innerText=money(brokerBalance);if(cb)cb.innerText=money(cashBalance);
+  if(rb)rb.innerText=money(rpBalance);
+  if(bb)bb.innerText=(appData.displayCurrency==="USD"&&brokerBalance>0)
+    ? `${money(brokerBalance)} · ${formatMoneyText(brokerBalance)}원`
+    : money(brokerBalance);
+  if(cb)cb.innerText=money(cashBalance);
 
   document.getElementById("rebalanceDeployTotal").innerText=money(deploy);
   document.getElementById("rebalanceRpRemainingText").innerText=money(rpRemaining);
