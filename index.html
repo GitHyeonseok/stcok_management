@@ -4,33 +4,73 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1.0" name="viewport"/>
-<meta content="#007aff" name="theme-color"/>
+<meta content="#0b1020" name="theme-color"/>
+<meta content="light dark" name="color-scheme"/>
 <link href="manifest.json" rel="manifest"/>
 <meta content="yes" name="mobile-web-app-capable"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
-<title>내 자산관리 시스템</title>
+<title>Wealth Console · 자산관리</title>
 <style>
-*{box-sizing:border-box} body{margin:0;padding:12px;background:#f4f6f8;color:#202124;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
-.container{max-width:920px;margin:auto}.header{margin:4px 0 18px}.header h1{font-size:1.55rem;margin:0}.header p{font-size:.82rem;color:#666;margin:5px 0}
-.card{background:#fff;border-radius:14px;padding:17px;margin-bottom:14px;box-shadow:0 2px 9px rgba(0,0,0,.06)}
-h2{margin:0 0 14px;font-size:1.05rem;border-bottom:2px solid #007aff;padding-bottom:8px}h3{font-size:.93rem;margin:15px 0 7px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.summary{background:#f7f9fc;padding:13px;border-radius:10px}.title{font-size:.76rem;color:#666}.value{font-size:1.1rem;font-weight:800;margin-top:5px}
-label{display:block;font-size:.78rem;color:#666;margin:8px 0 4px}input,select,textarea{width:100%;padding:10px;border:1px solid #d5d8dc;border-radius:8px;background:#fff;font-size:.92rem}textarea{min-height:72px;resize:vertical}
-button{width:100%;border:0;border-radius:8px;padding:11px;margin-top:10px;background:#007aff;color:#fff;font-weight:700;cursor:pointer}.gray{background:#6c757d}.red{background:#c5221f}.green{background:#137333}
-.status{padding:13px;border-radius:9px;background:#eef7ff;line-height:1.65;font-size:.86rem}.signal{padding:15px;border-radius:9px;text-align:center;font-weight:800;margin:10px 0}.wait{background:#fef7e0;color:#a15c00}.buySignal{background:#e6f4ea;color:#137333}.risk{background:#fce8e6;color:#c5221f}
-table{width:100%;border-collapse:collapse;font-size:.77rem;margin-top:8px}th,td{border-bottom:1px solid #eee;padding:8px 4px;text-align:right}th{background:#f8f9fa;text-align:center}td:first-child{text-align:left}.scroll{overflow-x:auto}
-.positive{color:#d93025}.negative{color:#1967d2}.buy{color:#d93025;font-weight:bold}.sell{color:#1967d2;font-weight:bold}
-.progress-bg{height:18px;background:#e8eaed;border-radius:999px;overflow:hidden;margin-top:10px}.progress-bar{height:100%;background:#007aff;width:0;transition:.25s}
-.note{color:#666;font-size:.78rem;line-height:1.5}.hidden{display:none}.preview{max-width:100%;max-height:420px;border-radius:10px;margin-top:10px;border:1px solid #ddd}
-.asset-row{display:grid;grid-template-columns:1.2fr 1fr .7fr;gap:7px;align-items:end;margin-top:8px}.warn{background:#fff4e5;border-radius:8px;padding:10px;margin-top:8px;font-size:.8rem}
-.smallbtn{width:auto;padding:6px 8px;margin:0;font-size:.72rem}.delete{background:#c5221f}
-@media(max-width:650px){.grid3{grid-template-columns:1fr}.grid2{grid-template-columns:1fr 1fr}.asset-row{grid-template-columns:1fr 1fr}.asset-row .wide{grid-column:1/-1}body{padding:9px}table{font-size:.71rem}}
+:root{
+  --bg:#f4f6f9;--bg2:#eef2f7;--surface:rgba(255,255,255,.86);--surface-solid:#fff;--surface-2:#f7f9fc;
+  --text:#111827;--muted:#6b7280;--muted2:#9ca3af;--line:rgba(15,23,42,.08);--primary:#2563eb;
+  --primary-soft:#eff6ff;--green:#059669;--green-soft:#ecfdf5;--red:#dc2626;--red-soft:#fef2f2;
+  --amber:#d97706;--amber-soft:#fffbeb;--shadow:0 10px 30px rgba(15,23,42,.07);--radius:22px;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#090c12;--bg2:#0d1119;--surface:rgba(20,25,35,.88);--surface-solid:#141923;--surface-2:#1a202c;
+  --text:#f3f4f6;--muted:#9ca3af;--muted2:#6b7280;--line:rgba(255,255,255,.08);--primary:#60a5fa;
+  --primary-soft:rgba(59,130,246,.12);--green:#34d399;--green-soft:rgba(16,185,129,.12);--red:#fb7185;--red-soft:rgba(244,63,94,.11);
+  --amber:#fbbf24;--amber-soft:rgba(245,158,11,.10);--shadow:0 16px 40px rgba(0,0,0,.30);
+}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;background:
+  radial-gradient(circle at 12% -10%,rgba(37,99,235,.10),transparent 28rem),
+  radial-gradient(circle at 95% 5%,rgba(14,165,233,.08),transparent 25rem),var(--bg);
+  color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Segoe UI",Roboto,sans-serif;
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+button,input,select,textarea{font:inherit}
+.container{max-width:1080px;margin:auto;padding:18px 16px 80px}
+.topbar{position:sticky;top:10px;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin:0 auto 20px;padding:10px 12px 10px 16px;border:1px solid var(--line);border-radius:18px;
+  background:color-mix(in srgb,var(--surface-solid) 80%,transparent);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}.brand-mark{width:34px;height:34px;border-radius:11px;
+  display:grid;place-items:center;background:linear-gradient(135deg,#2563eb,#06b6d4);color:#fff;font-weight:900;box-shadow:0 6px 18px rgba(37,99,235,.25)}
+.brand-title{font-size:.98rem;font-weight:850;white-space:nowrap}.brand-sub{font-size:.68rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.currency-toggle{display:flex;background:var(--surface-2);border:1px solid var(--line);padding:3px;border-radius:12px;gap:2px}
+.currency-toggle button{width:auto;margin:0;padding:7px 11px;border-radius:9px;background:transparent;color:var(--muted);font-size:.74rem;box-shadow:none}
+.currency-toggle button.active{background:var(--surface-solid);color:var(--text);box-shadow:0 2px 8px rgba(15,23,42,.08)}
+.header{margin:8px 2px 18px}.header h1{font-size:clamp(1.65rem,4vw,2.2rem);margin:0 0 7px;letter-spacing:-.04em}.header p{font-size:.86rem;color:var(--muted);margin:0;line-height:1.55}
+.hero{display:grid;grid-template-columns:1.45fr .55fr;gap:14px;margin-bottom:14px}.hero-main{padding:24px;background:linear-gradient(135deg,var(--surface-solid),var(--surface));border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow)}
+.hero-label{font-size:.75rem;color:var(--muted);font-weight:700}.hero-value{font-size:clamp(2rem,7vw,3.2rem);font-weight:900;letter-spacing:-.055em;margin-top:6px}.hero-sub{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;font-size:.75rem;color:var(--muted)}
+.hero-side{display:grid;gap:10px}.metric{padding:16px;border:1px solid var(--line);border-radius:20px;background:var(--surface);box-shadow:var(--shadow)}.metric .title{font-size:.7rem;color:var(--muted)}.metric .value{font-size:1.05rem;font-weight:850;margin-top:5px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:14px;box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}.card-head h2,.card h2{margin:0;font-size:1.02rem;letter-spacing:-.025em;border:0;padding:0}.eyebrow{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--primary);font-weight:800;margin-bottom:5px}
+h3{font-size:.9rem;margin:18px 0 8px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.summary{background:var(--surface-2);padding:14px;border-radius:16px;border:1px solid var(--line)}.title{font-size:.72rem;color:var(--muted)}.value{font-size:1.08rem;font-weight:850;margin-top:5px;letter-spacing:-.025em}
+label{display:block;font-size:.72rem;color:var(--muted);font-weight:650;margin:9px 0 5px}input,select,textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface-solid);color:var(--text);font-size:.9rem;outline:none;transition:.18s}
+input:focus,select:focus,textarea:focus{border-color:color-mix(in srgb,var(--primary) 55%,transparent);box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 12%,transparent)}textarea{min-height:76px;resize:vertical}
+button{width:100%;border:0;border-radius:12px;padding:11px 13px;margin-top:10px;background:var(--primary);color:#fff;font-weight:800;cursor:pointer;transition:transform .15s,opacity .15s,box-shadow .15s;box-shadow:0 7px 16px color-mix(in srgb,var(--primary) 20%,transparent)}button:active{transform:scale(.985)}button:hover{opacity:.94}.gray{background:#64748b}.red{background:#dc2626}.green{background:#059669}
+.status{padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);line-height:1.65;font-size:.82rem}.signal{padding:16px;border-radius:15px;text-align:center;font-weight:850;margin:10px 0;border:1px solid var(--line)}.wait{background:var(--amber-soft);color:var(--amber)}.buySignal{background:var(--green-soft);color:var(--green)}.risk{background:var(--red-soft);color:var(--red)}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:.78rem;margin-top:8px}th,td{border-bottom:1px solid var(--line);padding:11px 7px;text-align:right;white-space:nowrap}th{color:var(--muted);font-size:.68rem;font-weight:750;text-align:center;background:transparent;position:sticky;top:0}td:first-child{text-align:left}.scroll{overflow:auto;border:1px solid var(--line);border-radius:14px;padding:0 8px;background:var(--surface-solid)}
+.positive,.buy{color:var(--red);font-weight:800}.negative,.sell{color:var(--primary);font-weight:800}.progress-bg{height:10px;background:var(--surface-2);border-radius:999px;overflow:hidden;margin-top:12px}.progress-bar{height:100%;background:linear-gradient(90deg,#2563eb,#06b6d4);width:0;transition:.35s}.note{color:var(--muted);font-size:.75rem;line-height:1.55}.hidden{display:none}.preview{max-width:100%;max-height:420px;border-radius:14px;margin-top:10px;border:1px solid var(--line)}
+.asset-row{display:grid;grid-template-columns:1.25fr 1fr .65fr;gap:8px;align-items:end;margin-top:8px}.warn{background:var(--amber-soft);border:1px solid color-mix(in srgb,var(--amber) 20%,transparent);border-radius:12px;padding:11px;margin-top:8px;font-size:.78rem}.smallbtn{width:auto;padding:6px 9px;margin:0;font-size:.7rem;box-shadow:none}.delete{background:#dc2626}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.chip{width:auto;margin:0;padding:7px 10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);font-size:.7rem;font-weight:800;box-shadow:none}.chip:hover,.chip.active{background:var(--primary-soft);color:var(--primary);border-color:color-mix(in srgb,var(--primary) 25%,transparent)}
+.source-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.source-card{padding:14px;border:1px solid var(--line);border-radius:17px;background:var(--surface-2)}.source-card label{margin-top:0}.source-balance{font-size:.7rem;color:var(--muted);margin-top:5px}.source-balance b{color:var(--text)}
+.section-split{display:grid;grid-template-columns:1fr 1fr;gap:14px}.satellite-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;background:var(--primary-soft);color:var(--primary);font-size:.68rem;font-weight:800}.secondary{font-size:.68rem;color:var(--muted);margin-top:3px}.money-input{text-align:right;font-variant-numeric:tabular-nums}.settlement{background:var(--red-soft);border-color:color-mix(in srgb,var(--red) 14%,transparent)}
+details.card{padding:0;overflow:hidden}details.card>summary{list-style:none;cursor:pointer;padding:18px 20px;font-weight:850;font-size:.98rem;display:flex;justify-content:space-between;align-items:center}details.card>summary::-webkit-details-marker{display:none}details.card>summary:after{content:'+';font-size:1.2rem;color:var(--muted)}details.card[open]>summary:after{content:'−'}details.card>.details-body{padding:0 20px 20px;border-top:1px solid var(--line)}
+@media(max-width:850px){.hero{grid-template-columns:1fr}.hero-side{grid-template-columns:repeat(3,1fr)}.summary-grid{grid-template-columns:1fr 1fr}.source-grid,.grid3,.grid4{grid-template-columns:1fr 1fr}.section-split{grid-template-columns:1fr}}
+@media(max-width:620px){.container{padding:10px 10px 60px}.topbar{top:6px}.brand-sub{display:none}.header{padding:0 4px}.hero-main{padding:20px}.hero-side{grid-template-columns:1fr 1fr}.hero-side .metric:last-child{grid-column:1/-1}.grid2,.grid3,.grid4,.source-grid{grid-template-columns:1fr}.summary-grid{grid-template-columns:1fr 1fr}.card{padding:16px;border-radius:18px}.asset-row{grid-template-columns:1fr 1fr}.asset-row .wide{grid-column:1/-1}table{font-size:.72rem}.currency-toggle button{padding:6px 8px}.hero-value{font-size:2.15rem}}
 </style>
 </head>
 <body>
 <div class="container">
-<div class="header"><h1>💰 내 자산관리 시스템</h1><p>대시보드 → 자산 업데이트 → QQQ 월봉 HA → 리밸런싱 → 기록</p></div>
+<div class="topbar">
+  <div class="brand"><div class="brand-mark">W</div><div><div class="brand-title">Wealth Console</div><div class="brand-sub">자금 흐름 · 포트폴리오 · 리밸런싱</div></div></div>
+  <div class="currency-toggle"><button id="krwToggle" class="active" onclick="setDisplayCurrency('KRW')">₩ KRW</button><button id="usdToggle" onclick="setDisplayCurrency('USD')">$ USD</button></div>
+</div>
+<div class="header"><h1>내 돈이 지금 어디에 있는지, 한 화면에서.</h1><p>실질 순자산과 사용 가능한 자금은 결제·환전 대기 금액을 중복 제거해서 계산합니다.</p></div>
 
 
 
@@ -43,26 +83,31 @@ table{width:100%;border-collapse:collapse;font-size:.77rem;margin-top:8px}th,td{
 
 
 
+<div class="hero">
+  <div class="hero-main">
+    <div class="hero-label">실질 순자산</div><div class="hero-value" id="netWorthDisplay">0원</div>
+    <div class="hero-sub"><span>시장 투자자산 <b id="investmentDisplay">0원</b></span><span>리밸런싱 가용 <b id="availableRebalanceDisplay">0원</b></span><span>결제·환전 대기 <b id="pendingOutflowDisplay">0원</b></span></div>
+  </div>
+  <div class="hero-side">
+    <div class="metric"><div class="title">외화RP</div><div class="value" id="rpDisplay">0원</div><div class="secondary" id="rpUsdDisplay"></div></div>
+    <div class="metric"><div class="title">안전자금</div><div class="value" id="safeMoneyDisplay">0원</div></div>
+    <div class="metric"><div class="title">개별주 / 위성</div><div class="value" id="satelliteDisplay">0원</div></div>
+  </div>
+</div>
 <div class="card">
-<h2>🏦 1. 순자산 대시보드</h2>
-<div class="summary-grid">
-<div class="summary"><div class="title">총 순자산</div><div class="value" id="netWorthDisplay">0원</div></div>
-<div class="summary"><div class="title">총 투자자산</div><div class="value" id="investmentDisplay">0원</div></div>
-<div class="summary"><div class="title">안전자금</div><div class="value" id="safeMoneyDisplay">0원</div></div>
-<div class="summary"><div class="title">외화RP</div><div class="value" id="rpDisplay">0원</div></div>
-</div>
-<h3>자산 구성</h3>
+<div class="card-head"><div><div class="eyebrow">Cash Management</div><h2>자금 구성</h2></div><span class="satellite-badge">중복금액 자동 차감</span></div>
 <div class="grid2">
-<div><label>원화 현금 / 통장</label><input id="cashKRW" type="number"/></div>
-<div><label>증권계좌 예수금</label><input id="brokerCash" type="number"/></div>
-<div><label>비상금</label><input id="emergency" type="number"/></div>
-<div><label>예정 지출 보관금</label><input id="plannedExpense" type="number"/></div>
-<div><label>외화RP</label><input id="foreignRP" type="number"/></div>
-<div><label>기타 자산</label><input id="otherAsset" type="number"/></div>
-<div><label>기타 투자자산</label><input id="otherInvestment" type="number"/></div>
-<div><label>부채</label><input id="debt" type="number"/></div>
+<div><label>원화 현금 / 통장</label><input id="cashKRW" type="text" inputmode="numeric" class="money-input"/></div>
+<div><label>증권계좌 예수금</label><input id="brokerCash" type="text" inputmode="numeric" class="money-input"/></div>
+<div class="settlement" style="padding:10px;border-radius:14px"><label>결제·환전 예정 출금</label><input id="pendingBrokerOutflow" type="text" inputmode="numeric" class="money-input"/><div class="secondary">이미 주식·달러자산에 반영됐지만 예수금에서도 아직 빠지지 않은 금액</div></div>
+<div><label>외화RP (원화 평가액)</label><input id="foreignRP" type="text" inputmode="numeric" class="money-input"/><div class="secondary" id="foreignRpInputUsd"></div></div>
+<div><label>비상금</label><input id="emergency" type="text" inputmode="numeric" class="money-input"/></div>
+<div><label>예정 지출 보관금</label><input id="plannedExpense" type="text" inputmode="numeric" class="money-input"/></div>
+<div><label>기타 자산</label><input id="otherAsset" type="text" inputmode="numeric" class="money-input"/></div>
+<div><label>기타 투자자산</label><input id="otherInvestment" type="text" inputmode="numeric" class="money-input"/></div>
+<div><label>부채</label><input id="debt" type="text" inputmode="numeric" class="money-input"/></div>
 </div>
-<button onclick="saveAll()">자산 저장</button>
+<button onclick="saveAll()">자금 저장</button>
 </div><div class="card">
 <h2>📷 2. 자산 스크린샷 AI 분석</h2>
 <p class="note">증권사/은행 앱 스크린샷을 이 사이트에 직접 올리면 종목과 평가금액을 읽습니다. 인식 결과를 확인·수정한 뒤 자산에 반영하세요.</p>
@@ -86,50 +131,52 @@ table{width:100%;border-collapse:collapse;font-size:.77rem;margin-top:8px}th,td{
 <div class="signal wait" id="signalStatus">시장 데이터 확인 중...</div>
 <div class="status" id="signalDetail"></div>
 </div><div class="card">
-<h2>📂 5. 투자자산 보유 현황</h2>
-<div class="scroll"><table><thead><tr><th>종목</th><th>목표</th><th>현재 평가금액</th></tr></thead><tbody id="holdingInputs"></tbody></table></div>
+<div class="card-head"><div><div class="eyebrow">Portfolio</div><h2>투자자산 보유 현황</h2></div><span class="satellite-badge">코어 / 위성 분리</span></div>
+<h3>코어 포트폴리오</h3>
+<div class="scroll"><table><thead><tr><th>종목</th><th>목표</th><th>현재 평가금액</th><th>USD 환산</th></tr></thead><tbody id="holdingInputs"></tbody></table></div>
+<h3>개별주 · 위성 포지션 <span class="satellite-badge">리밸런싱 제외</span></h3>
+<div class="scroll"><table><thead><tr><th>종목</th><th>현재 평가금액</th><th>현재가</th><th>전체 투자자산 비중</th></tr></thead><tbody id="satelliteInputs"></tbody></table></div>
+<p class="note">TSMC와 Tempus AI는 코어 목표비중 계산에서 제외합니다. 보유 현황과 전체 투자자산 대비 비중만 추적합니다.</p>
 <button onclick="saveAll()">보유자산 저장</button>
 </div><div class="card">
-<h2>⚖️ 6. 포트폴리오 리밸런싱</h2>
-
+<div class="card-head"><div><div class="eyebrow">Rebalancing</div><h2>포트폴리오 리밸런싱</h2></div><span class="satellite-badge" id="rebalanceAvailableBadge">가용자금 0원</span></div>
 <label>리밸런싱 방식</label>
 <select id="rebalanceMode" onchange="updateRebalanceInputs()">
-<option value="buyOnly">추가매수 모드 (기존 자산 매도 안 함)</option>
-<option value="full">전체 리밸런싱 (매도 허용)</option>
+<option value="buyOnly">추가매수 모드 · 기존 자산 매도 안 함</option>
+<option value="full">전체 리밸런싱 · 매도 허용</option>
 </select>
 
-<div class="grid3">
-<div><label>외화RP 투입액</label><input id="rebalanceRpDeploy" min="0" oninput="updateRebalanceInputs()" type="number" placeholder="0"/></div>
-<div><label>예수금 투입액</label><input id="rebalanceBrokerDeploy" min="0" oninput="updateRebalanceInputs()" type="number" placeholder="0"/></div>
-<div><label>원화현금 투입액</label><input id="rebalanceCashDeploy" min="0" oninput="updateRebalanceInputs()" type="number" placeholder="0"/></div>
-<div><label>신규자금 / 기타</label><input id="rebalanceNewDeploy" min="0" oninput="updateRebalanceInputs()" type="number" placeholder="0"/></div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px"><h3 style="margin:0">투입할 자금</h3><div class="chips"><button class="chip" onclick="setAllDeployPercent(1)">MAX</button><button class="chip" onclick="setAllDeployPercent(.75)">75%</button><button class="chip" onclick="setAllDeployPercent(.5)">50%</button><button class="chip" onclick="setAllDeployPercent(.25)">25%</button></div></div>
+<div class="source-grid" style="margin-top:10px">
+  <div class="source-card"><label>외화RP 투입</label><input id="rebalanceRpDeploy" class="money-input" inputmode="numeric" type="text" oninput="handleMoneyInput(this);updateRebalanceInputs()"/><div class="source-balance">보유 <b id="rpSourceBalance">0원</b></div><div class="chips"><button class="chip" onclick="setSourcePercent('rp',1)">MAX</button><button class="chip" onclick="setSourcePercent('rp',.75)">75%</button><button class="chip" onclick="setSourcePercent('rp',.5)">50%</button><button class="chip" onclick="setSourcePercent('rp',.25)">25%</button></div></div>
+  <div class="source-card"><label>예수금 투입</label><input id="rebalanceBrokerDeploy" class="money-input" inputmode="numeric" type="text" oninput="handleMoneyInput(this);updateRebalanceInputs()"/><div class="source-balance">실제 사용 가능 <b id="brokerSourceBalance">0원</b></div><div class="chips"><button class="chip" onclick="setSourcePercent('broker',1)">MAX</button><button class="chip" onclick="setSourcePercent('broker',.75)">75%</button><button class="chip" onclick="setSourcePercent('broker',.5)">50%</button><button class="chip" onclick="setSourcePercent('broker',.25)">25%</button></div></div>
+  <div class="source-card"><label>원화현금 투입</label><input id="rebalanceCashDeploy" class="money-input" inputmode="numeric" type="text" oninput="handleMoneyInput(this);updateRebalanceInputs()"/><div class="source-balance">보유 <b id="cashSourceBalance">0원</b></div><div class="chips"><button class="chip" onclick="setSourcePercent('cash',1)">MAX</button><button class="chip" onclick="setSourcePercent('cash',.75)">75%</button><button class="chip" onclick="setSourcePercent('cash',.5)">50%</button><button class="chip" onclick="setSourcePercent('cash',.25)">25%</button></div></div>
 </div>
+<div style="margin-top:10px"><label>신규자금 / 기타</label><input id="rebalanceNewDeploy" class="money-input" inputmode="numeric" type="text" oninput="handleMoneyInput(this);updateRebalanceInputs()" placeholder="0"/></div>
 
-<div class="summary-grid" style="margin-top:10px">
-<div class="summary"><div class="title">이번 추가 투자금 합계</div><div class="value" id="rebalanceDeployTotal">0원</div></div>
+<div class="summary-grid" style="margin-top:12px">
+<div class="summary"><div class="title">이번 투입금</div><div class="value" id="rebalanceDeployTotal">0원</div></div>
 <div class="summary"><div class="title">투입 후 외화RP</div><div class="value" id="rebalanceRpRemainingText">0원</div></div>
 <div class="summary"><div class="title">투입 후 예수금</div><div class="value" id="rebalanceBrokerRemainingText">0원</div></div>
 <div class="summary"><div class="title">투입 후 원화현금</div><div class="value" id="rebalanceCashRemainingText">0원</div></div>
-<div class="summary"><div class="title">투자 후 목표 포트폴리오</div><div class="value" id="rebalanceAfterTotal">0원</div></div>
 </div>
-
-<p class="note">외화RP·예수금·원화현금을 동시에 투입할 수 있습니다. 추가매수 모드에서는 기존 종목을 매도하지 않고, 목표비중과의 제곱오차가 최소가 되도록 새 투자금을 배분합니다.</p>
-<div class="status" id="rebalanceSummary"></div>
-<div class="scroll"><table><thead><tr><th>종목</th><th>목표</th><th>현재</th><th>투자 후</th><th>조정</th><th>현재가</th><th>수량</th></tr></thead><tbody id="rebalanceTable"></tbody></table></div>
-<p class="note">기타 투자자산은 목표 포트폴리오 6종목의 비중 계산에서 제외합니다. 전체 리밸런싱 모드에서만 기존 종목 매도를 계산합니다.</p>
+<div class="status" id="rebalanceSummary" style="margin-top:12px"></div>
+<div class="scroll" style="margin-top:12px"><table><thead><tr><th>종목</th><th>목표</th><th>현재</th><th>투자 후</th><th>조정</th><th>현재가</th><th>수량</th></tr></thead><tbody id="rebalanceTable"></tbody></table></div>
+<p class="note">TSMC·Tempus AI·기타 투자자산은 코어 6종목 리밸런싱 비중에서 제외됩니다. 결제·환전 예정 출금액은 예수금 MAX에서 자동 차감합니다.</p>
+<div class="hidden" id="rebalanceAfterTotal">0원</div>
 </div><div class="card">
 <h2>🎯 7. 자산 목표</h2>
 <div class="grid3">
-<div><label>목표 순자산</label><input id="goalAmount" type="number"/></div>
+<div><label>목표 순자산</label><input id="goalAmount" type="text" inputmode="numeric" class="money-input"/></div>
 <div><label>목표 날짜</label><input id="goalDate" type="date"/></div>
-<div><label>월 추가 저축/투자액</label><input id="monthlyContribution" type="number"/></div>
+<div><label>월 추가 저축/투자액</label><input id="monthlyContribution" type="text" inputmode="numeric" class="money-input"/></div>
 </div>
 <button onclick="saveAll()">목표 저장</button>
 <div class="progress-bg"><div class="progress-bar" id="goalProgress"></div></div>
 <div class="status" id="goalInfo" style="margin-top:10px"></div>
 </div><div class="card">
 <h2>📊 8. 투자 성과</h2>
-<div class="grid2"><div><label>누적 투자 원금</label><input id="investmentPrincipal" type="number"/></div><div><label>누적 배당 / 이자</label><input id="incomeReceived" type="number"/></div></div>
+<div class="grid2"><div><label>누적 투자 원금</label><input id="investmentPrincipal" type="text" inputmode="numeric" class="money-input"/></div><div><label>누적 배당 / 이자</label><input id="incomeReceived" type="text" inputmode="numeric" class="money-input"/></div></div>
 <button onclick="saveAll()">성과 저장</button>
 <div class="summary-grid" style="margin-top:12px">
 <div class="summary"><div class="title">현재 투자 평가액</div><div class="value" id="performanceValue">0원</div></div>
@@ -141,9 +188,9 @@ table{width:100%;border-collapse:collapse;font-size:.77rem;margin-top:8px}th,td{
 <h2>📝 9. 매매일지</h2>
 <div class="grid2">
 <div><label>날짜</label><input id="tradeDate" type="date"/></div>
-<div><label>종목</label><select id="tradeTicker"><option>QLD</option><option>QQQ</option><option>VOO</option><option>BRK.B</option><option>Visa</option><option>KRX 금</option><option>외화RP</option></select></div>
+<div><label>종목</label><select id="tradeTicker"><option>QLD</option><option>QQQ</option><option>VOO</option><option>BRK.B</option><option>Visa</option><option>KRX 금</option><option>TSMC</option><option>Tempus AI</option><option>외화RP</option></select></div>
 <div><label>구분</label><select id="tradeType"><option>매수</option><option>매도</option><option>환전</option><option>배당</option><option>이자</option></select></div>
-<div><label>거래 금액</label><input id="tradeAmount" type="number"/></div>
+<div><label>거래 금액</label><input id="tradeAmount" type="text" inputmode="numeric" class="money-input"/></div>
 </div>
 <label>거래 이유 / 기록</label><textarea id="tradeMemo" placeholder="예: QQQ 확정 월봉 HA 초록 → QLD 보유"></textarea>
 <button onclick="addTrade()">매매 기록 추가</button>
@@ -156,10 +203,10 @@ table{width:100%;border-collapse:collapse;font-size:.77rem;margin-top:8px}th,td{
 </div><div class="card">
 <h2>💸 11. 월 현금흐름</h2>
 <div class="grid2">
-<div><label>월 수입</label><input id="monthlyIncome" type="number"/></div>
-<div><label>고정비</label><input id="fixedExpense" type="number"/></div>
-<div><label>생활비</label><input id="livingExpense" type="number"/></div>
-<div><label>기타 지출</label><input id="otherExpense" type="number"/></div>
+<div><label>월 수입</label><input id="monthlyIncome" type="text" inputmode="numeric" class="money-input"/></div>
+<div><label>고정비</label><input id="fixedExpense" type="text" inputmode="numeric" class="money-input"/></div>
+<div><label>생활비</label><input id="livingExpense" type="text" inputmode="numeric" class="money-input"/></div>
+<div><label>기타 지출</label><input id="otherExpense" type="text" inputmode="numeric" class="money-input"/></div>
 </div>
 <button onclick="saveAll()">현금흐름 저장</button><div class="status" id="cashflowResult" style="margin-top:10px"></div>
 </div><div class="card">
@@ -177,48 +224,90 @@ const portfolio=[
 {id:"qld",name:"QLD",weight:30},{id:"qqq",name:"QQQ",weight:20},{id:"voo",name:"VOO",weight:20},
 {id:"brkb",name:"버크셔 B",weight:15},{id:"visa",name:"Visa",weight:5},{id:"gold",name:"KRX 금",weight:10}
 ];
+const satellites=[{id:"tsm",name:"TSMC",ticker:"TSM"},{id:"tem",name:"Tempus AI",ticker:"TEM"}];
 const STORAGE_KEY="wealthManagerDataV3";
 const AUTO_BACKUP_KEY="wealthManagerAutoBackupV3";
+const DISPLAY_CURRENCY_KEY="wealthManagerDisplayCurrency";
 let marketDataGlobal=null, recognizedAssets=[];
+let displayCurrency=localStorage.getItem(DISPLAY_CURRENCY_KEY)||"KRW";
 
 function defaultData(){return{
-cashKRW:0,brokerCash:0,emergency:0,plannedExpense:0,foreignRP:0,otherAsset:0,otherInvestment:0,debt:0,rebalanceRpDeploy:0,rebalanceBrokerDeploy:0,rebalanceCashDeploy:0,rebalanceNewDeploy:0,rebalanceMode:"buyOnly",rebalanceSource:"foreignRP",
-goalAmount:100000000,goalDate:"",monthlyContribution:0,
-holdings:{qld:0,qqq:0,voo:0,brkb:0,visa:0,gold:0},
-investmentPrincipal:0,incomeReceived:0,monthlyIncome:0,fixedExpense:0,livingExpense:0,otherExpense:0,
-s5tw:0,s5twBottomDetected:false,trades:[],snapshots:[],workerUrl:"" // s5tw 관련 값은 구버전 백업 호환용이며 현재 매매조건에는 사용하지 않음
+ cashKRW:0,brokerCash:0,pendingBrokerOutflow:0,emergency:0,plannedExpense:0,foreignRP:0,otherAsset:0,otherInvestment:0,debt:0,
+ rebalanceRpDeploy:0,rebalanceBrokerDeploy:0,rebalanceCashDeploy:0,rebalanceNewDeploy:0,rebalanceMode:"buyOnly",rebalanceInitialized:false,
+ goalAmount:100000000,goalDate:"",monthlyContribution:0,
+ holdings:{qld:0,qqq:0,voo:0,brkb:0,visa:0,gold:0},satelliteHoldings:{tsm:0,tem:0},
+ investmentPrincipal:0,incomeReceived:0,monthlyIncome:0,fixedExpense:0,livingExpense:0,otherExpense:0,
+ s5tw:0,s5twBottomDetected:false,trades:[],snapshots:[],workerUrl:""
 }}
-function loadData(){try{const x=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");if(!x)return defaultData();return{...defaultData(),...x,holdings:{...defaultData().holdings,...(x.holdings||{})}}}catch{return defaultData()}}
+function loadData(){
+ try{
+  const x=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");
+  if(!x)return defaultData();
+  return {...defaultData(),...x,holdings:{...defaultData().holdings,...(x.holdings||{})},satelliteHoldings:{...defaultData().satelliteHoldings,...(x.satelliteHoldings||{})}};
+ }catch{return defaultData()}
+}
 let appData=loadData();
 
-// 이전 버전에서 AI 기타종목이 "기타 자산"에 저장된 뒤
-// 새 버전에서 "기타 투자자산"에도 같은 금액이 들어간 경우 1회 정리
 (function migrateDuplicateOtherAsset(){
-  const MIGRATION_KEY="wealthManagerMigration_otherInvestment_v1";
-  if(localStorage.getItem(MIGRATION_KEY)) return;
-
-  const oldOther=Number(appData.otherAsset)||0;
-  const otherInvestment=Number(appData.otherInvestment)||0;
-
-  if(oldOther>0 && otherInvestment>0 && oldOther===otherInvestment){
-    appData.otherAsset=0;
-    localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));
-  }
-
-  localStorage.setItem(MIGRATION_KEY,"done");
+ const MIGRATION_KEY="wealthManagerMigration_otherInvestment_v1";
+ if(localStorage.getItem(MIGRATION_KEY)) return;
+ const oldOther=Number(appData.otherAsset)||0,otherInvestment=Number(appData.otherInvestment)||0;
+ if(oldOther>0&&otherInvestment>0&&oldOther===otherInvestment){appData.otherAsset=0;localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));}
+ localStorage.setItem(MIGRATION_KEY,"done");
 })();
-const money=v=>Math.round(Number(v)||0).toLocaleString()+"원";
-const num=id=>Number(document.getElementById(id)?.value)||0;
 
-function createHoldingInputs(){const t=document.getElementById("holdingInputs");t.innerHTML="";portfolio.forEach(p=>{const target=p.id==="qld"?"30% (HA ON) / 0% (OFF)":p.weight+"%";t.insertAdjacentHTML("beforeend",`<tr><td><b>${p.name}</b></td><td style="text-align:center">${target}</td><td><input type="number" id="holding_${p.id}" value="${appData.holdings[p.id]||0}" onchange="saveAll()"></td></tr>`);})}
-function populateInputs(){
-["cashKRW","brokerCash","emergency","plannedExpense","foreignRP","otherAsset","otherInvestment","debt","rebalanceRpDeploy","rebalanceBrokerDeploy","rebalanceCashDeploy","rebalanceNewDeploy","goalAmount","goalDate","monthlyContribution","investmentPrincipal","incomeReceived","monthlyIncome","fixedExpense","livingExpense","otherExpense"].forEach(id=>{const e=document.getElementById(id);if(e)e.value=appData[id]??""});
-document.getElementById("tradeDate").value=new Date().toISOString().slice(0,10);
-document.getElementById("workerUrl").value=appData.workerUrl||"";
-document.getElementById("rebalanceMode").value=appData.rebalanceMode||"buyOnly";
+const rawNumber=v=>Number(String(v??"").replace(/[^0-9.-]/g,""))||0;
+const num=id=>rawNumber(document.getElementById(id)?.value);
+const fxRate=()=>Number(marketDataGlobal?.fx_rate)||0;
+const krwMoney=v=>Math.round(Number(v)||0).toLocaleString("ko-KR")+"원";
+const usdMoney=v=>"$"+(Number(v)||0).toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:2});
+function money(v){const n=Number(v)||0,fx=fxRate();return displayCurrency==="USD"&&fx>0?usdMoney(n/fx):krwMoney(n)}
+function secondaryUsd(v){const fx=fxRate();return fx>0?usdMoney((Number(v)||0)/fx):"환율 데이터 대기"}
+function setDisplayCurrency(cur){displayCurrency=cur;localStorage.setItem(DISPLAY_CURRENCY_KEY,cur);syncCurrencyToggle();renderAll();}
+function syncCurrencyToggle(){const k=document.getElementById("krwToggle"),u=document.getElementById("usdToggle");if(k)k.classList.toggle("active",displayCurrency==="KRW");if(u)u.classList.toggle("active",displayCurrency==="USD");}
+function formatMoneyText(v){const n=rawNumber(v);return n?Math.round(n).toLocaleString("ko-KR"):""}
+function handleMoneyInput(el){const neg=String(el.value).trim().startsWith("-");const digits=String(el.value).replace(/[^0-9]/g,"");el.value=digits?(neg?"-":"")+Number(digits).toLocaleString("ko-KR"):"";}
+function setupMoneyInputs(){
+ const ids=["cashKRW","brokerCash","pendingBrokerOutflow","emergency","plannedExpense","foreignRP","otherAsset","otherInvestment","debt","rebalanceRpDeploy","rebalanceBrokerDeploy","rebalanceCashDeploy","rebalanceNewDeploy","goalAmount","monthlyContribution","investmentPrincipal","incomeReceived","tradeAmount","monthlyIncome","fixedExpense","livingExpense","otherExpense"];
+ ids.forEach(id=>{const el=document.getElementById(id);if(!el)return;el.type="text";el.inputMode="numeric";el.classList.add("money-input");if(!el.dataset.moneyBound){el.addEventListener("input",()=>handleMoneyInput(el));el.dataset.moneyBound="1";}});
 }
-function getInvestmentValue(){return portfolio.reduce((s,p)=>s+(Number(appData.holdings[p.id])||0),0)+Number(appData.otherInvestment||0)}
-function getNetWorth(){return Number(appData.cashKRW||0)+Number(appData.brokerCash||0)+Number(appData.emergency||0)+Number(appData.plannedExpense||0)+Number(appData.foreignRP||0)+Number(appData.otherAsset||0)+getInvestmentValue()-Number(appData.debt||0)}
+function formatAllMoneyInputs(){document.querySelectorAll(".money-input").forEach(el=>{el.value=formatMoneyText(el.value)});}
+
+function createHoldingInputs(){
+ const t=document.getElementById("holdingInputs");t.innerHTML="";
+ portfolio.forEach(p=>{
+  const target=p.id==="qld"?"30% (HA ON) / 0% (OFF)":p.weight+"%";
+  const amount=Number(appData.holdings[p.id])||0;
+  const usd=p.id==="gold"?"—":secondaryUsd(amount);
+  t.insertAdjacentHTML("beforeend",`<tr><td><b>${p.name}</b></td><td style="text-align:center">${target}</td><td><input class="money-input" inputmode="numeric" type="text" id="holding_${p.id}" value="${formatMoneyText(amount)}" onchange="saveAll()" oninput="handleMoneyInput(this)"></td><td><span class="secondary">${usd}</span></td></tr>`);
+ });
+ createSatelliteInputs();
+}
+function createSatelliteInputs(){
+ const t=document.getElementById("satelliteInputs");if(!t)return;t.innerHTML="";
+ const total=Math.max(1,getInvestmentValue());
+ satellites.forEach(p=>{
+  const amount=Number(appData.satelliteHoldings[p.id])||0;
+  const info=marketDataGlobal?.prices?.[p.id]||null,price=Number(info?.price)||0;
+  const priceText=price?usdMoney(price):"데이터 대기";
+  const pct=amount/total*100;
+  t.insertAdjacentHTML("beforeend",`<tr><td><b>${p.name}</b><div class="secondary">${p.ticker}</div></td><td><input class="money-input" inputmode="numeric" type="text" id="satellite_${p.id}" value="${formatMoneyText(amount)}" onchange="saveAll()" oninput="handleMoneyInput(this)"></td><td>${priceText}</td><td>${pct.toFixed(1)}%</td></tr>`);
+ });
+}
+function populateInputs(){
+ ["cashKRW","brokerCash","pendingBrokerOutflow","emergency","plannedExpense","foreignRP","otherAsset","otherInvestment","debt","rebalanceRpDeploy","rebalanceBrokerDeploy","rebalanceCashDeploy","rebalanceNewDeploy","goalAmount","goalDate","monthlyContribution","investmentPrincipal","incomeReceived","monthlyIncome","fixedExpense","livingExpense","otherExpense"].forEach(id=>{const e=document.getElementById(id);if(e)e.value=appData[id]??""});
+ document.getElementById("tradeDate").value=new Date().toISOString().slice(0,10);
+ document.getElementById("workerUrl").value=appData.workerUrl||"";
+ document.getElementById("rebalanceMode").value=appData.rebalanceMode||"buyOnly";
+ setupMoneyInputs();formatAllMoneyInputs();syncCurrencyToggle();
+}
+function getCoreInvestmentValue(){return portfolio.reduce((s,p)=>s+(Number(appData.holdings[p.id])||0),0)}
+function getSatelliteValue(){return satellites.reduce((s,p)=>s+(Number(appData.satelliteHoldings[p.id])||0),0)}
+function getInvestmentValue(){return getCoreInvestmentValue()+getSatelliteValue()+Number(appData.otherInvestment||0)}
+function getAvailableBrokerCash(){return Math.max(0,Number(appData.brokerCash||0)-Number(appData.pendingBrokerOutflow||0))}
+function getAvailableRebalanceCash(){return Math.max(0,Number(appData.foreignRP||0))+getAvailableBrokerCash()+Math.max(0,Number(appData.cashKRW||0))}
+function getNetWorth(){return Number(appData.cashKRW||0)+Number(appData.brokerCash||0)-Number(appData.pendingBrokerOutflow||0)+Number(appData.emergency||0)+Number(appData.plannedExpense||0)+Number(appData.foreignRP||0)+Number(appData.otherAsset||0)+getInvestmentValue()-Number(appData.debt||0)}
+
 function makeAutoBackup(reason="저장 전"){
   try{
     localStorage.setItem(AUTO_BACKUP_KEY,JSON.stringify({version:3,savedAt:new Date().toISOString(),reason,data:JSON.parse(JSON.stringify(appData))}));
@@ -240,7 +329,7 @@ function restoreAutoBackup(){
     if(!p?.data)return alert("복원할 자동백업이 없습니다.");
     if(!confirm("현재 데이터를 최근 자동백업 상태로 되돌릴까요?"))return;
     const current=JSON.parse(JSON.stringify(appData));
-    appData={...defaultData(),...p.data,holdings:{...defaultData().holdings,...(p.data.holdings||{})}};
+    appData={...defaultData(),...p.data,holdings:{...defaultData().holdings,...(p.data.holdings||{})},satelliteHoldings:{...defaultData().satelliteHoldings,...(p.data.satelliteHoldings||{})}};
     localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));
     localStorage.setItem(AUTO_BACKUP_KEY,JSON.stringify({version:3,savedAt:new Date().toISOString(),reason:"복원 직전",data:current}));
     location.reload();
@@ -248,28 +337,48 @@ function restoreAutoBackup(){
 }
 
 function saveAll(){makeAutoBackup("저장 전");
-["cashKRW","brokerCash","emergency","plannedExpense","foreignRP","otherAsset","otherInvestment","debt","rebalanceRpDeploy","rebalanceBrokerDeploy","rebalanceCashDeploy","rebalanceNewDeploy","goalAmount","monthlyContribution","investmentPrincipal","incomeReceived","monthlyIncome","fixedExpense","livingExpense","otherExpense"].forEach(id=>appData[id]=num(id));
+["cashKRW","brokerCash","pendingBrokerOutflow","emergency","plannedExpense","foreignRP","otherAsset","otherInvestment","debt","rebalanceRpDeploy","rebalanceBrokerDeploy","rebalanceCashDeploy","rebalanceNewDeploy","goalAmount","monthlyContribution","investmentPrincipal","incomeReceived","monthlyIncome","fixedExpense","livingExpense","otherExpense"].forEach(id=>appData[id]=num(id));
 appData.goalDate=document.getElementById("goalDate").value;
 appData.workerUrl=document.getElementById("workerUrl").value.trim();
 portfolio.forEach(p=>appData.holdings[p.id]=num("holding_"+p.id));
-localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));renderAll();
+satellites.forEach(p=>appData.satelliteHoldings[p.id]=num("satellite_"+p.id));
+initializeRebalanceDefaults();
+localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));formatAllMoneyInputs();renderAll();
 }
-function renderAll(){renderDashboard();renderGoal();renderPerformance();renderCashflow();renderRebalance();renderTrades();renderSnapshots();updateSignal()}
-function renderDashboard(){const i=getInvestmentValue(),n=getNetWorth();document.getElementById("netWorthDisplay").innerText=money(n);document.getElementById("investmentDisplay").innerText=money(i);document.getElementById("safeMoneyDisplay").innerText=money(Number(appData.emergency||0)+Number(appData.plannedExpense||0));document.getElementById("rpDisplay").innerText=money(appData.foreignRP)}
+function renderAll(){renderDashboard();renderGoal();renderPerformance();renderCashflow();renderRebalance();renderTrades();renderSnapshots();updateSignal();createSatelliteInputs();syncCurrencyToggle()}
+function renderDashboard(){
+ const i=getInvestmentValue(),n=getNetWorth(),available=getAvailableRebalanceCash(),pending=Number(appData.pendingBrokerOutflow)||0,sat=getSatelliteValue();
+ document.getElementById("netWorthDisplay").innerText=money(n);
+ document.getElementById("investmentDisplay").innerText=money(i);
+ document.getElementById("availableRebalanceDisplay").innerText=money(available);
+ document.getElementById("pendingOutflowDisplay").innerText=pending?"-"+money(pending):money(0);
+ document.getElementById("safeMoneyDisplay").innerText=money(Number(appData.emergency||0)+Number(appData.plannedExpense||0));
+ document.getElementById("rpDisplay").innerText=money(appData.foreignRP);
+ document.getElementById("satelliteDisplay").innerText=money(sat);
+ const rpUsd=document.getElementById("rpUsdDisplay"),rpInputUsd=document.getElementById("foreignRpInputUsd");
+ if(rpUsd)rpUsd.innerText=secondaryUsd(appData.foreignRP);if(rpInputUsd)rpInputUsd.innerText="≈ "+secondaryUsd(appData.foreignRP);
+}
 function renderGoal(){const n=getNetWorth(),g=Number(appData.goalAmount)||0,p=g>0?Math.max(0,n/g*100):0,r=Math.max(g-n,0);document.getElementById("goalProgress").style.width=Math.min(p,100)+"%";let est="월 추가 저축/투자액을 입력하면 단순 예상 기간을 계산합니다.";if(r>0&&appData.monthlyContribution>0){const m=Math.ceil(r/appData.monthlyContribution);est=`수익률을 제외한 단순 계산: 약 <b>${Math.floor(m/12)}년 ${m%12}개월</b>`}document.getElementById("goalInfo").innerHTML=`<b>진행률:</b> ${p.toFixed(1)}%<br><b>현재:</b> ${money(n)}<br><b>목표:</b> ${money(g)}<br><b>남은 금액:</b> ${money(r)}<br><b>목표 날짜:</b> ${appData.goalDate||"미설정"}<br><br>${est}`}
 function renderPerformance(){const v=getInvestmentValue(),p=Number(appData.investmentPrincipal)||0,inc=Number(appData.incomeReceived)||0,profit=v-p,total=profit+inc,rate=p>0?total/p*100:0;performanceValue.innerText=money(v);profitDisplay.innerText=money(profit);returnDisplay.innerText=rate.toFixed(2)+"%";totalProfitDisplay.innerText=money(total);profitDisplay.className="value "+(profit>=0?"positive":"negative");returnDisplay.className="value "+(rate>=0?"positive":"negative");totalProfitDisplay.className="value "+(total>=0?"positive":"negative")}
 function renderCashflow(){const i=Number(appData.monthlyIncome)||0,e=Number(appData.fixedExpense||0)+Number(appData.livingExpense||0)+Number(appData.otherExpense||0),s=i-e;cashflowResult.innerHTML=`<b>월 수입:</b> ${money(i)}<br><b>월 지출:</b> ${money(e)}<br><b>월 잉여자금:</b> ${money(s)}<br><b>저축 가능 비율:</b> ${(i>0?s/i*100:0).toFixed(1)}%`}
 function updateRebalanceDeploy(){ updateRebalanceInputs(); }
 
 function updateRebalanceInputs(){
-  appData.rebalanceRpDeploy=Math.max(0,Number(document.getElementById("rebalanceRpDeploy")?.value)||0);
-  appData.rebalanceBrokerDeploy=Math.max(0,Number(document.getElementById("rebalanceBrokerDeploy")?.value)||0);
-  appData.rebalanceCashDeploy=Math.max(0,Number(document.getElementById("rebalanceCashDeploy")?.value)||0);
-  appData.rebalanceNewDeploy=Math.max(0,Number(document.getElementById("rebalanceNewDeploy")?.value)||0);
+  appData.rebalanceRpDeploy=Math.max(0,num("rebalanceRpDeploy"));
+  appData.rebalanceBrokerDeploy=Math.max(0,num("rebalanceBrokerDeploy"));
+  appData.rebalanceCashDeploy=Math.max(0,num("rebalanceCashDeploy"));
+  appData.rebalanceNewDeploy=Math.max(0,num("rebalanceNewDeploy"));
   appData.rebalanceMode=document.getElementById("rebalanceMode")?.value||"buyOnly";
+  appData.rebalanceInitialized=true;
   localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));
   renderRebalance();
 }
+function sourceBalance(kind){if(kind==="rp")return Math.max(0,Number(appData.foreignRP)||0);if(kind==="broker")return getAvailableBrokerCash();return Math.max(0,Number(appData.cashKRW)||0)}
+function sourceInputId(kind){return kind==="rp"?"rebalanceRpDeploy":kind==="broker"?"rebalanceBrokerDeploy":"rebalanceCashDeploy"}
+function setSourcePercent(kind,pct){const el=document.getElementById(sourceInputId(kind));if(!el)return;el.value=formatMoneyText(Math.floor(sourceBalance(kind)*pct));updateRebalanceInputs();}
+function setAllDeployPercent(pct){["rp","broker","cash"].forEach(kind=>{const el=document.getElementById(sourceInputId(kind));if(el)el.value=formatMoneyText(Math.floor(sourceBalance(kind)*pct));});updateRebalanceInputs();}
+function initializeRebalanceDefaults(){if(appData.rebalanceInitialized)return;const total=sourceBalance("rp")+sourceBalance("broker")+sourceBalance("cash");if(total<=0)return;appData.rebalanceRpDeploy=sourceBalance("rp");appData.rebalanceBrokerDeploy=sourceBalance("broker");appData.rebalanceCashDeploy=sourceBalance("cash");appData.rebalanceInitialized=true;localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));const map={rp:"rebalanceRpDeploy",broker:"rebalanceBrokerDeploy",cash:"rebalanceCashDeploy"};Object.entries(map).forEach(([k,id])=>{const e=document.getElementById(id);if(e)e.value=formatMoneyText(sourceBalance(k));});}
+
 
 /*
   추가매수 최적화:
@@ -341,8 +450,9 @@ function executableWholeShareBuys(current,weights,idealBuys,cash,targetTotal=nul
 function renderRebalance(){
   const core=portfolio.reduce((x,p)=>x+(Number(appData.holdings[p.id])||0),0);
   const other=Number(appData.otherInvestment)||0;
+  const satelliteValue=getSatelliteValue();
   const rpBalance=Math.max(0,Number(appData.foreignRP)||0);
-  const brokerBalance=Math.max(0,Number(appData.brokerCash)||0);
+  const brokerBalance=getAvailableBrokerCash();
   const cashBalance=Math.max(0,Number(appData.cashKRW)||0);
   const rpRequested=Math.max(0,Number(appData.rebalanceRpDeploy)||0);
   const brokerRequested=Math.max(0,Number(appData.rebalanceBrokerDeploy)||0);
@@ -352,6 +462,10 @@ function renderRebalance(){
   const deploy=rpDeploy+brokerDeploy+cashDeploy+newMoney,rpRemaining=rpBalance-rpDeploy,brokerRemaining=brokerBalance-brokerDeploy,cashRemaining=cashBalance-cashDeploy;
   const mode=appData.rebalanceMode||"buyOnly";
   const qldState=getQldStrategyState();
+
+  const badge=document.getElementById("rebalanceAvailableBadge");if(badge)badge.innerText="가용자금 "+money(rpBalance+brokerBalance+cashBalance);
+  const rb=document.getElementById("rpSourceBalance"),bb=document.getElementById("brokerSourceBalance"),cb=document.getElementById("cashSourceBalance");
+  if(rb)rb.innerText=money(rpBalance);if(bb)bb.innerText=money(brokerBalance);if(cb)cb.innerText=money(cashBalance);
 
   document.getElementById("rebalanceDeployTotal").innerText=money(deploy);
   document.getElementById("rebalanceRpRemainingText").innerText=money(rpRemaining);
@@ -395,6 +509,7 @@ function renderRebalance(){
     (mode==="buyOnly"?`<b>예상 주문금액:</b> ${money(actualSpent)}<br><b>정수주 주문 후 잔액:</b> ${money(orderRemaining)}<br>`:"")+
     (qldState===false?`<b>QLD 대기자금 목표(전략상 30%):</b> ${money(strategyReserve)}<br>`:"")+
     `<b>전략 기준 총액:</b> ${money(targetTotal)}<br>`+
+    `<b>개별주 / 위성:</b> ${money(satelliteValue)} (비중 계산 제외)<br>`+
     `<b>기타 투자자산:</b> ${money(other)} (비중 계산 제외)`+
     (warnings.length?`<br><span class="negative"><b>⚠️ ${warnings.join(" / ")}</b></span>`:"");
 
@@ -496,7 +611,7 @@ async function loadMarketData(){
     marketDataGlobal=await r.json();
     const n=getTrendMarketData(),v=getVxnMarketData(),fx=Number(marketDataGlobal.fx_rate)||0;
     const prices=marketDataGlobal.prices||{};
-    const priceLine=["qld","qqq","voo","brkb","visa"].map(id=>{const x=prices[id];return x?.price?`${id==="brkb"?"BRK.B":id.toUpperCase()} $${Number(x.price).toLocaleString(undefined,{maximumFractionDigits:2})}`:null}).filter(Boolean).join(" · ");
+    const priceLine=["qld","qqq","voo","brkb","visa","tsm","tem"].map(id=>{const x=prices[id];return x?.price?`${id==="brkb"?"BRK.B":id.toUpperCase()} $${Number(x.price).toLocaleString(undefined,{maximumFractionDigits:2})}`:null}).filter(Boolean).join(" · ");
     const haText=n.haState==="green"?"🟢 GREEN · QLD ON":n.haState==="red"?"🔴 RED · QLD OFF":"⏳ 데이터 없음";
     marketData.innerHTML=
       `<b>최종 업데이트:</b> ${marketDataGlobal.updated_at||"-"}<br>`+
@@ -506,7 +621,7 @@ async function loadMarketData(){
       `<b>VXN:</b> ${v.price?v.price.toLocaleString(undefined,{maximumFractionDigits:2}):"-"}<br>`+
       `<b>USD/KRW:</b> ${fx?fx.toLocaleString()+"원":"-"}<br>`+
       `<b>주가:</b> ${priceLine||"-"}`;
-    updateSignal();renderRebalance();
+    updateSignal();renderRebalance();createHoldingInputs();renderDashboard();
   }catch{
     marketData.innerHTML="⚠️ data.json을 불러오지 못했습니다.";
     updateSignal();
@@ -534,7 +649,7 @@ function deleteSnapshot(id){appData.snapshots=appData.snapshots.filter(x=>x.id!=
 function renderSnapshots(){snapshotTable.innerHTML="";if(!appData.snapshots.length){snapshotSummary.innerHTML="아직 기록이 없습니다.";snapshotTable.innerHTML=`<tr><td colspan="4" style="text-align:center;color:#777">기록 없음</td></tr>`;return}const first=appData.snapshots[0],last=appData.snapshots.at(-1);snapshotSummary.innerHTML=`<b>첫 기록:</b> ${money(first.value)}<br><b>최근:</b> ${money(last.value)}<br><b>누적 변화:</b> ${money(last.value-first.value)}`;[...appData.snapshots].reverse().forEach(s=>{const i=appData.snapshots.findIndex(x=>x.id===s.id),d=i>0?s.value-appData.snapshots[i-1].value:0;snapshotTable.insertAdjacentHTML("beforeend",`<tr><td>${s.date}</td><td>${money(s.value)}</td><td class="${d>=0?"positive":"negative"}">${d>=0?"+":""}${money(d)}</td><td><button class="smallbtn delete" onclick="deleteSnapshot(${s.id})">삭제</button></td></tr>`)})}
 
 function exportBackup(){saveAll();const blob=new Blob([JSON.stringify({version:3,exportedAt:new Date().toISOString(),data:appData},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download="asset-backup-"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(u)}
-function importBackup(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=x=>{try{const p=JSON.parse(x.target.result),d=p.data||p;if(!confirm("현재 데이터를 백업파일로 교체할까요?"))return;appData={...defaultData(),...d,holdings:{...defaultData().holdings,...(d.holdings||{})}};localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));location.reload()}catch{alert("올바른 백업파일이 아닙니다.")}};r.readAsText(f)}
+function importBackup(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=x=>{try{const p=JSON.parse(x.target.result),d=p.data||p;if(!confirm("현재 데이터를 백업파일로 교체할까요?"))return;appData={...defaultData(),...d,holdings:{...defaultData().holdings,...(d.holdings||{})},satelliteHoldings:{...defaultData().satelliteHoldings,...(d.satelliteHoldings||{})}};localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));location.reload()}catch{alert("올바른 백업파일이 아닙니다.")}};r.readAsText(f)}
 function resetEverything(){if(confirm("정말 모든 개인 데이터를 초기화할까요?")&&confirm("마지막 확인입니다.")){localStorage.removeItem(STORAGE_KEY);location.reload()}}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 
@@ -562,7 +677,7 @@ async function analyzeScreenshot(){
   }catch(e){alert("분석 실패: "+e.message)}
   finally{aiLoading.classList.add("hidden")}
 }
-const assetNames={qld:"QLD",qqq:"QQQ",voo:"VOO",brkb:"버크셔 B",visa:"Visa",gold:"KRX 금",cashKRW:"원화 현금",brokerCash:"증권계좌 예수금",foreignRP:"외화RP",emergency:"비상금",plannedExpense:"예정지출",otherAsset:"기타 자산",otherInvestment:"기타 투자자산",unknown:"분류 불가"};
+const assetNames={qld:"QLD",qqq:"QQQ",voo:"VOO",brkb:"버크셔 B",visa:"Visa",gold:"KRX 금",tsm:"TSMC",tem:"Tempus AI",cashKRW:"원화 현금",brokerCash:"증권계좌 예수금",foreignRP:"외화RP",emergency:"비상금",plannedExpense:"예정지출",otherAsset:"기타 자산",otherInvestment:"기타 투자자산",unknown:"분류 불가"};
 function renderRecognized(data){
   document.getElementById("recognizedAssets").innerHTML="";
   recognizedAssets=(data.assets||[]).map(a=>
@@ -581,28 +696,31 @@ function recognizedAssetsEl(i,a){
     <div class="wide"><label>${escapeHtml(a.source_label||"인식 항목")}</label>
       <select id="ai_id_${i}">${Object.entries(assetNames).map(([k,v])=>`<option value="${k}" ${k===a.canonical_id?"selected":""}>${v}</option>`).join("")}</select>
     </div>
-    <div><label>평가금액(원)</label><input type="number" id="ai_amt_${i}" value="${Math.round(a.amount_krw||0)}"></div>
+    <div><label>평가금액(원)</label><input class="money-input" inputmode="numeric" type="text" id="ai_amt_${i}" oninput="handleMoneyInput(this)" value="${formatMoneyText(a.amount_krw||0)}"></div>
     <div><label>신뢰도</label><input value="${Math.round((a.confidence||0)*100)}%" disabled></div>
   </div>`);
 }
 function applyRecognizedAssets(){
   const mode=applyMode.value;
   for(let i=0;i<recognizedAssets.length;i++){
-    const id=document.getElementById("ai_id_"+i).value,amount=Number(document.getElementById("ai_amt_"+i).value)||0;
+    const id=document.getElementById("ai_id_"+i).value,amount=rawNumber(document.getElementById("ai_amt_"+i).value);
     if(id==="unknown"||amount<0)continue;
     if(["qld","qqq","voo","brkb","visa","gold"].includes(id)){
       appData.holdings[id]=mode==="add"?(Number(appData.holdings[id])||0)+amount:amount;
+    }else if(["tsm","tem"].includes(id)){
+      appData.satelliteHoldings[id]=mode==="add"?(Number(appData.satelliteHoldings[id])||0)+amount:amount;
     }else if(["cashKRW","brokerCash","foreignRP","emergency","plannedExpense","otherAsset","otherInvestment"].includes(id)){
       appData[id]=mode==="add"?(Number(appData[id])||0)+amount:amount;
     }
   }
+  initializeRebalanceDefaults();
   localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));
   createHoldingInputs();populateInputs();renderAll();
   alert("확인한 자산을 반영했습니다.");
   window.scrollTo({top:document.querySelectorAll(".card")[0].offsetTop-10,behavior:"smooth"});
 }
 
-createHoldingInputs();populateInputs();renderAll();renderAutoBackupStatus();loadMarketData();
+createHoldingInputs();populateInputs();initializeRebalanceDefaults();formatAllMoneyInputs();renderAll();renderAutoBackupStatus();loadMarketData();
 </script>
 </body>
 </html>

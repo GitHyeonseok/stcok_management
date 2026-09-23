@@ -13,6 +13,8 @@ ASSETS = {
     "voo": ("VOO", "VOO"),
     "brkb": ("BRK-B", "BRK.B"),
     "visa": ("V", "Visa"),
+    "tsm": ("TSM", "TSMC"),
+    "tem": ("TEM", "Tempus AI"),
 }
 
 KRX_GOLD_URL = "https://data-dbg.krx.co.kr/svc/apis/gen/gold_bydd_trd"
