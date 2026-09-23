@@ -372,12 +372,17 @@ function restoreAutoBackup(){
 }
 
 function saveAll(){makeAutoBackup("저장 전");
+const prevSources={rp:sourceBalance("rp"),broker:sourceBalance("broker"),cash:sourceBalance("cash")};
 ["cashKRW","brokerCash","pendingBrokerOutflow","emergency","plannedExpense","foreignRP","otherAsset","otherInvestment","debt","rebalanceRpDeploy","rebalanceBrokerDeploy","rebalanceCashDeploy","rebalanceNewDeploy","goalAmount","monthlyContribution","investmentPrincipal","incomeReceived","monthlyIncome","fixedExpense","livingExpense","otherExpense"].forEach(id=>appData[id]=num(id));
 appData.goalDate=document.getElementById("goalDate").value;
 appData.workerUrl=document.getElementById("workerUrl").value.trim();
 portfolio.forEach(p=>appData.holdings[p.id]=num("holding_"+p.id));
 satellites.forEach(p=>appData.satelliteHoldings[p.id]=num("satellite_"+p.id));
-initializeRebalanceDefaults();
+const sourcesChanged=
+  Math.abs(prevSources.rp-sourceBalance("rp"))>1 ||
+  Math.abs(prevSources.broker-sourceBalance("broker"))>1 ||
+  Math.abs(prevSources.cash-sourceBalance("cash"))>1;
+if(sourcesChanged)syncRebalanceSourcesToMax();else initializeRebalanceDefaults();
 localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));formatAllMoneyInputs();renderAll();
 }
 function renderAll(){renderDashboard();renderGoal();renderPerformance();renderCashflow();renderRebalance();renderTrades();renderSnapshots();updateSignal();createSatelliteInputs();syncCurrencyToggle()}
@@ -412,7 +417,24 @@ function sourceBalance(kind){if(kind==="rp")return Math.max(0,Number(appData.for
 function sourceInputId(kind){return kind==="rp"?"rebalanceRpDeploy":kind==="broker"?"rebalanceBrokerDeploy":"rebalanceCashDeploy"}
 function setSourcePercent(kind,pct){const el=document.getElementById(sourceInputId(kind));if(!el)return;el.value=formatMoneyText(Math.floor(sourceBalance(kind)*pct));updateRebalanceInputs();}
 function setAllDeployPercent(pct){["rp","broker","cash"].forEach(kind=>{const el=document.getElementById(sourceInputId(kind));if(el)el.value=formatMoneyText(Math.floor(sourceBalance(kind)*pct));});updateRebalanceInputs();}
-function initializeRebalanceDefaults(){if(appData.rebalanceInitialized)return;const total=sourceBalance("rp")+sourceBalance("broker")+sourceBalance("cash");if(total<=0)return;appData.rebalanceRpDeploy=sourceBalance("rp");appData.rebalanceBrokerDeploy=sourceBalance("broker");appData.rebalanceCashDeploy=sourceBalance("cash");appData.rebalanceInitialized=true;localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));const map={rp:"rebalanceRpDeploy",broker:"rebalanceBrokerDeploy",cash:"rebalanceCashDeploy"};Object.entries(map).forEach(([k,id])=>{const e=document.getElementById(id);if(e)e.value=formatMoneyText(sourceBalance(k));});}
+function syncRebalanceSourcesToMax(){
+  appData.rebalanceRpDeploy=sourceBalance("rp");
+  appData.rebalanceBrokerDeploy=sourceBalance("broker");
+  appData.rebalanceCashDeploy=sourceBalance("cash");
+  appData.rebalanceInitialized=true;
+  const map={rp:"rebalanceRpDeploy",broker:"rebalanceBrokerDeploy",cash:"rebalanceCashDeploy"};
+  Object.entries(map).forEach(([k,id])=>{
+    const e=document.getElementById(id);
+    if(e)e.value=formatMoneyText(sourceBalance(k));
+  });
+}
+function initializeRebalanceDefaults(){
+  if(appData.rebalanceInitialized)return;
+  const total=sourceBalance("rp")+sourceBalance("broker")+sourceBalance("cash");
+  if(total<=0)return;
+  syncRebalanceSourcesToMax();
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));
+}
 
 
 /*
@@ -756,6 +778,7 @@ function recognizedAssetsEl(i,a){
 }
 function applyRecognizedAssets(){
   const mode=applyMode.value;
+  let rebalanceSourceChanged=false;
   for(let i=0;i<recognizedAssets.length;i++){
     const id=document.getElementById("ai_id_"+i).value,amount=rawNumber(document.getElementById("ai_amt_"+i).value);
     if(id==="unknown"||amount<0)continue;
@@ -765,9 +788,10 @@ function applyRecognizedAssets(){
       appData.satelliteHoldings[id]=mode==="add"?(Number(appData.satelliteHoldings[id])||0)+amount:amount;
     }else if(["cashKRW","brokerCash","foreignRP","emergency","plannedExpense","otherInvestment"].includes(id)){
       appData[id]=mode==="add"?(Number(appData[id])||0)+amount:amount;
+      if(["cashKRW","brokerCash","foreignRP"].includes(id))rebalanceSourceChanged=true;
     }
   }
-  initializeRebalanceDefaults();
+  if(rebalanceSourceChanged)syncRebalanceSourcesToMax();else initializeRebalanceDefaults();
   localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));
   createHoldingInputs();populateInputs();renderAll();
   alert("확인한 자산을 반영했습니다.");
