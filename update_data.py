@@ -21,7 +21,8 @@ ASSETS = {
 
 KRX_GOLD_URL = "https://data-dbg.krx.co.kr/svc/apis/gen/gold_bydd_trd"
 
-BTC_ETF_FLOW_URL = "https://farside.co.uk/btc/"
+BTC_ETF_FLOW_URL = "https://farside.co.uk/bitcoin-etf-flow-all-data/"
+BTC_ETF_FLOW_FALLBACK_URL = "https://coinclass.com/bitcoin-etf"
 
 
 class _TableRowParser(HTMLParser):
@@ -75,75 +76,125 @@ def _parse_farside_flow(value):
         return None
 
 
-def fetch_btc_etf_flows():
-    """
-    Farside의 미국 현물 BTC ETF 전체 일일 순유입/순유출(US$m)을 읽는다.
-    최신 거래일 값과 최근 5거래일 합계를 반환한다.
-    실패해도 다른 시장 데이터 업데이트는 계속 진행한다.
-    """
-    try:
-        r = requests.get(
-            BTC_ETF_FLOW_URL,
-            timeout=20,
-            headers={"User-Agent": "Mozilla/5.0 WealthConsole/1.0"},
-        )
-        r.raise_for_status()
+def _extract_etf_flow_rows(html_text):
+    """Farside/CoinClass 표에서 날짜 + 마지막 Total 열을 뽑는다."""
+    parser = _TableRowParser()
+    parser.feed(html_text)
 
-        parser = _TableRowParser()
-        parser.feed(r.text)
+    rows = []
+    for row in parser.rows:
+        if len(row) < 2:
+            continue
 
-        rows = []
-        for row in parser.rows:
-            if len(row) < 2:
-                continue
-            date_text = row[0].strip()
-            if not re.fullmatch(r"\d{2}\s+[A-Za-z]{3}\s+\d{4}", date_text):
-                continue
+        date_text = row[0].strip()
+        d = None
+
+        # Farside: 25 Sep 2026
+        if re.fullmatch(r"\d{2}\s+[A-Za-z]{3}\s+\d{4}", date_text):
             try:
                 d = datetime.datetime.strptime(date_text, "%d %b %Y").date()
             except ValueError:
-                continue
+                pass
 
-            total = _parse_farside_flow(row[-1])
-            if total is None:
-                continue
-            rows.append((d, total))
+        # CoinClass: 2026-09-25
+        elif re.fullmatch(r"\d{4}-\d{2}-\d{2}", date_text):
+            try:
+                d = datetime.datetime.strptime(date_text, "%Y-%m-%d").date()
+            except ValueError:
+                pass
 
-        if not rows:
-            raise ValueError("Farside date rows not found")
+        if d is None:
+            continue
 
-        # 중복 날짜가 있으면 마지막 값을 사용.
-        by_date = {}
-        for d, total in rows:
-            by_date[d] = total
-        ordered = sorted(by_date.items(), key=lambda x: x[0])
+        total = _parse_farside_flow(row[-1])
+        if total is None:
+            continue
 
-        latest_date, latest_total = ordered[-1]
-        last5 = ordered[-5:]
-        five_day_total = sum(v for _, v in last5)
+        rows.append((d, total))
 
-        return {
-            "latest_usd_m": round(latest_total, 1),
-            "latest_date": latest_date.isoformat(),
-            "five_day_usd_m": round(five_day_total, 1),
-            "five_day_start": last5[0][0].isoformat(),
-            "five_day_end": last5[-1][0].isoformat(),
-            "days_count": len(last5),
-            "source": "Farside Investors",
-            "status": "ok",
-        }
-    except Exception as e:
-        print(f"BTC ETF Flow Fetch Error: {e}")
-        return {
-            "latest_usd_m": None,
-            "latest_date": None,
-            "five_day_usd_m": None,
-            "five_day_start": None,
-            "five_day_end": None,
-            "days_count": 0,
-            "source": "Farside Investors",
-            "status": "unavailable",
-        }
+    # 같은 날짜가 여러 번 있으면 뒤쪽 행을 사용
+    by_date = {}
+    for d, total in rows:
+        by_date[d] = total
+
+    return sorted(by_date.items(), key=lambda x: x[0])
+
+
+def _request_html(url):
+    r = requests.get(
+        url,
+        timeout=25,
+        headers={
+            "User-Agent": (
+                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+            ),
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Cache-Control": "no-cache",
+        },
+    )
+    r.raise_for_status()
+    return r.text
+
+
+def fetch_btc_etf_flows():
+    """
+    미국 현물 BTC ETF 전체 일일 순유입/순유출(US$m).
+    1순위 Farside, 실패 시 CoinClass로 자동 폴백한다.
+    """
+    sources = [
+        ("Farside Investors", BTC_ETF_FLOW_URL),
+        ("CoinClass", BTC_ETF_FLOW_FALLBACK_URL),
+    ]
+
+    errors = []
+
+    for source_name, url in sources:
+        try:
+            html_text = _request_html(url)
+            ordered = _extract_etf_flow_rows(html_text)
+
+            if not ordered:
+                raise ValueError("ETF flow date rows not found")
+
+            latest_date, latest_total = ordered[-1]
+            last5 = ordered[-5:]
+            five_day_total = sum(v for _, v in last5)
+
+            print(
+                f"BTC ETF Flow OK [{source_name}] "
+                f"{latest_date.isoformat()} latest={latest_total:.1f}M "
+                f"5d={five_day_total:.1f}M"
+            )
+
+            return {
+                "latest_usd_m": round(latest_total, 1),
+                "latest_date": latest_date.isoformat(),
+                "five_day_usd_m": round(five_day_total, 1),
+                "five_day_start": last5[0][0].isoformat(),
+                "five_day_end": last5[-1][0].isoformat(),
+                "days_count": len(last5),
+                "source": source_name,
+                "status": "ok",
+            }
+
+        except Exception as e:
+            msg = f"{source_name}: {type(e).__name__}: {e}"
+            errors.append(msg)
+            print(f"BTC ETF Flow source failed -> {msg}")
+
+    print("BTC ETF Flow Fetch Error: " + " | ".join(errors))
+    return {
+        "latest_usd_m": None,
+        "latest_date": None,
+        "five_day_usd_m": None,
+        "five_day_start": None,
+        "five_day_end": None,
+        "days_count": 0,
+        "source": "Farside / CoinClass",
+        "status": "unavailable",
+    }
 
 
 def now_kst():
