@@ -1,6 +1,8 @@
 import os
 import json
 import datetime
+import re
+from html.parser import HTMLParser
 from zoneinfo import ZoneInfo
 
 import pandas as pd
@@ -18,6 +20,130 @@ ASSETS = {
 }
 
 KRX_GOLD_URL = "https://data-dbg.krx.co.kr/svc/apis/gen/gold_bydd_trd"
+
+BTC_ETF_FLOW_URL = "https://farside.co.uk/btc/"
+
+
+class _TableRowParser(HTMLParser):
+    """아주 단순한 HTML 표 파서. 추가 패키지 없이 Farside 표의 행/셀 텍스트만 수집."""
+    def __init__(self):
+        super().__init__()
+        self.rows = []
+        self._row = None
+        self._cell = None
+        self._in_cell = False
+
+    def handle_starttag(self, tag, attrs):
+        tag = tag.lower()
+        if tag == "tr":
+            self._row = []
+        elif tag in ("td", "th") and self._row is not None:
+            self._cell = []
+            self._in_cell = True
+
+    def handle_data(self, data):
+        if self._in_cell and self._cell is not None:
+            self._cell.append(data)
+
+    def handle_endtag(self, tag):
+        tag = tag.lower()
+        if tag in ("td", "th") and self._row is not None and self._cell is not None:
+            text = " ".join("".join(self._cell).replace("\xa0", " ").split())
+            self._row.append(text)
+            self._cell = None
+            self._in_cell = False
+        elif tag == "tr" and self._row is not None:
+            if self._row:
+                self.rows.append(self._row)
+            self._row = None
+            self._cell = None
+            self._in_cell = False
+
+
+def _parse_farside_flow(value):
+    """Farside 표의 US$m 값: (120.2) -> -120.2, 134.5 -> 134.5."""
+    s = str(value or "").strip().replace(",", "")
+    if not s or s in {"-", "—", "–"}:
+        return None
+    negative = s.startswith("(") and s.endswith(")")
+    if negative:
+        s = s[1:-1].strip()
+    try:
+        number = float(s)
+        return -number if negative else number
+    except ValueError:
+        return None
+
+
+def fetch_btc_etf_flows():
+    """
+    Farside의 미국 현물 BTC ETF 전체 일일 순유입/순유출(US$m)을 읽는다.
+    최신 거래일 값과 최근 5거래일 합계를 반환한다.
+    실패해도 다른 시장 데이터 업데이트는 계속 진행한다.
+    """
+    try:
+        r = requests.get(
+            BTC_ETF_FLOW_URL,
+            timeout=20,
+            headers={"User-Agent": "Mozilla/5.0 WealthConsole/1.0"},
+        )
+        r.raise_for_status()
+
+        parser = _TableRowParser()
+        parser.feed(r.text)
+
+        rows = []
+        for row in parser.rows:
+            if len(row) < 2:
+                continue
+            date_text = row[0].strip()
+            if not re.fullmatch(r"\d{2}\s+[A-Za-z]{3}\s+\d{4}", date_text):
+                continue
+            try:
+                d = datetime.datetime.strptime(date_text, "%d %b %Y").date()
+            except ValueError:
+                continue
+
+            total = _parse_farside_flow(row[-1])
+            if total is None:
+                continue
+            rows.append((d, total))
+
+        if not rows:
+            raise ValueError("Farside date rows not found")
+
+        # 중복 날짜가 있으면 마지막 값을 사용.
+        by_date = {}
+        for d, total in rows:
+            by_date[d] = total
+        ordered = sorted(by_date.items(), key=lambda x: x[0])
+
+        latest_date, latest_total = ordered[-1]
+        last5 = ordered[-5:]
+        five_day_total = sum(v for _, v in last5)
+
+        return {
+            "latest_usd_m": round(latest_total, 1),
+            "latest_date": latest_date.isoformat(),
+            "five_day_usd_m": round(five_day_total, 1),
+            "five_day_start": last5[0][0].isoformat(),
+            "five_day_end": last5[-1][0].isoformat(),
+            "days_count": len(last5),
+            "source": "Farside Investors",
+            "status": "ok",
+        }
+    except Exception as e:
+        print(f"BTC ETF Flow Fetch Error: {e}")
+        return {
+            "latest_usd_m": None,
+            "latest_date": None,
+            "five_day_usd_m": None,
+            "five_day_start": None,
+            "five_day_end": None,
+            "days_count": 0,
+            "source": "Farside Investors",
+            "status": "unavailable",
+        }
 
 
 def now_kst():
@@ -272,6 +398,8 @@ def get_market_data():
     except Exception as e:
         print(f"VXN Fetch Error: {e}")
 
+    btc_etf_flow = fetch_btc_etf_flows()
+
     stamp = now_kst().strftime("%Y-%m-%d %H:%M:%S KST")
 
     prices = {}
@@ -319,6 +447,7 @@ def get_market_data():
             "change": vxn_change,
             "pct": vxn_pct,
         },
+        "btc_etf_flow": btc_etf_flow,
         "prices": prices,
     }
 

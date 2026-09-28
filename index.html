@@ -651,6 +651,27 @@ function getVxnMarketData(){
   const v=marketDataGlobal?.vxn||marketDataGlobal?.VXN||{};
   return {price:Number(v.price ?? v.close)||0,change:Number(v.change)||0,pct:Number(v.pct)||0};
 }
+function getBtcEtfFlowData(){
+  const f=marketDataGlobal?.btc_etf_flow||{};
+  const latest=f.latest_usd_m==null?null:Number(f.latest_usd_m);
+  const five=f.five_day_usd_m==null?null:Number(f.five_day_usd_m);
+  return {
+    latest:Number.isFinite(latest)?latest:null,
+    latestDate:String(f.latest_date||""),
+    fiveDay:Number.isFinite(five)?five:null,
+    daysCount:Number(f.days_count)||0,
+    source:String(f.source||"Farside Investors"),
+    status:String(f.status||"")
+  };
+}
+function formatFlowUsdM(v){
+  if(v==null||!Number.isFinite(v))return "-";
+  const sign=v>0?"+":v<0?"−":"";
+  return `${sign}$${Math.abs(v).toLocaleString(undefined,{maximumFractionDigits:1})}M`;
+}
+function flowClass(v){
+  return v>0?"buy":v<0?"sell":"";
+}
 function updateSignal(){
   const status=document.getElementById("signalStatus"),detail=document.getElementById("signalDetail");
   if(!marketDataGlobal){status.className="signal wait";status.innerText="⏳ 시장 데이터 확인 중";detail.innerHTML="";return}
@@ -690,7 +711,7 @@ async function loadMarketData(){
   try{
     const r=await fetch("data.json?t="+Date.now());if(!r.ok)throw 0;
     marketDataGlobal=await r.json();
-    const n=getTrendMarketData(),v=getVxnMarketData(),fx=Number(marketDataGlobal.fx_rate)||0;
+    const n=getTrendMarketData(),v=getVxnMarketData(),f=getBtcEtfFlowData(),fx=Number(marketDataGlobal.fx_rate)||0;
     const prices=marketDataGlobal.prices||{};
     const priceLine=["qld","qqq","voo","brkb","visa","tsm","tem"].map(id=>{const x=prices[id];return x?.price?`${id==="brkb"?"BRK.B":id.toUpperCase()} $${Number(x.price).toLocaleString(undefined,{maximumFractionDigits:2})}`:null}).filter(Boolean).join(" · ");
     const haText=n.haState==="green"?"🟢 GREEN · QLD ON":n.haState==="red"?"🔴 RED · QLD OFF":"⏳ 데이터 없음";
@@ -700,6 +721,8 @@ async function loadMarketData(){
       `<b>QQQ:</b> ${n.price?n.price.toLocaleString(undefined,{maximumFractionDigits:2}):"-"}<br>`+
       `<b>참고 120일선 / 200일선:</b> ${n.sma120?n.sma120.toLocaleString(undefined,{maximumFractionDigits:2}):"-"} / ${n.sma200?n.sma200.toLocaleString(undefined,{maximumFractionDigits:2}):"-"}<br>`+
       `<b>VXN:</b> ${v.price?v.price.toLocaleString(undefined,{maximumFractionDigits:2}):"-"}<br>`+
+      `<b>BTC 현물 ETF 일일 순유입:</b> <span class="${flowClass(f.latest)}">${formatFlowUsdM(f.latest)}</span>${f.latestDate?` (${f.latestDate})`:""}<br>`+
+      `<b>BTC 현물 ETF 최근 ${f.daysCount||5}거래일:</b> <span class="${flowClass(f.fiveDay)}">${formatFlowUsdM(f.fiveDay)}</span>${f.status==="ok"?` <span class="note">· ${f.source}</span>`:""}<br>`+
       `<b>USD/KRW:</b> ${fx?fx.toLocaleString()+"원":"-"}<br>`+
       `<b>주가:</b> ${priceLine||"-"}`;
     updateSignal();renderRebalance();createHoldingInputs();renderDashboard();
