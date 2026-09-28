@@ -723,8 +723,7 @@ async function loadMarketData(){
       `<b>VXN:</b> ${v.price?v.price.toLocaleString(undefined,{maximumFractionDigits:2}):"-"}<br>`+
       `<b>BTC 현물 ETF 일일 순유입:</b> <span class="${flowClass(f.latest)}">${formatFlowUsdM(f.latest)}</span>${f.latestDate?` (${f.latestDate})`:""}<br>`+
       `<b>BTC 현물 ETF 최근 ${f.daysCount||5}거래일:</b> <span class="${flowClass(f.fiveDay)}">${formatFlowUsdM(f.fiveDay)}</span>${f.status==="ok"?` <span class="note">· ${f.source}</span>`:""}<br>`+
-      `<b>USD/KRW:</b> ${fx?fx.toLocaleString()+"원":"-"}<br>`+
-      `<b>주가:</b> ${priceLine||"-"}`;
+      `<b>USD/KRW:</b> ${fx?fx.toLocaleString()+"원":"-"}<br>`;
     updateSignal();renderRebalance();createHoldingInputs();renderDashboard();
   }catch{
     marketData.innerHTML="⚠️ data.json을 불러오지 못했습니다.";
