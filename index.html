@@ -301,7 +301,36 @@ function secondaryUsd(v){const fx=fxRate();return fx>0?usdMoney((Number(v)||0)/f
 function setDisplayCurrency(cur){displayCurrency=cur;localStorage.setItem(DISPLAY_CURRENCY_KEY,cur);syncCurrencyToggle();renderAll();}
 function syncCurrencyToggle(){const k=document.getElementById("krwToggle"),u=document.getElementById("usdToggle");if(k)k.classList.toggle("active",displayCurrency==="KRW");if(u)u.classList.toggle("active",displayCurrency==="USD");}
 function formatMoneyText(v){const n=rawNumber(v);return n?Math.round(n).toLocaleString("ko-KR"):""}
-function handleMoneyInput(el){const neg=String(el.value).trim().startsWith("-");const digits=String(el.value).replace(/[^0-9]/g,"");el.value=digits?(neg?"-":"")+Number(digits).toLocaleString("ko-KR"):"";}
+function handleMoneyInput(el){
+  const raw=String(el.value??"");
+  const start=el.selectionStart==null?raw.length:el.selectionStart;
+  const end=el.selectionEnd==null?start:el.selectionEnd;
+  const neg=raw.trim().startsWith("-");
+  const digits=raw.replace(/[^0-9]/g,"");
+  const digitsBeforeStart=(raw.slice(0,start).match(/[0-9]/g)||[]).length;
+  const digitsBeforeEnd=(raw.slice(0,end).match(/[0-9]/g)||[]).length;
+  const formatted=digits?(neg?"-":"")+Number(digits).toLocaleString("ko-KR"):"";
+
+  function caretAfterDigitCount(count){
+    if(count<=0)return neg&&formatted.startsWith("-")?1:0;
+    let seen=0;
+    for(let i=0;i<formatted.length;i++){
+      if(/[0-9]/.test(formatted[i])){
+        seen++;
+        if(seen>=count)return i+1;
+      }
+    }
+    return formatted.length;
+  }
+
+  el.value=formatted;
+
+  if(document.activeElement===el&&typeof el.setSelectionRange==="function"){
+    const nextStart=caretAfterDigitCount(digitsBeforeStart);
+    const nextEnd=caretAfterDigitCount(digitsBeforeEnd);
+    el.setSelectionRange(nextStart,nextEnd);
+  }
+}
 function setupMoneyInputs(){
  const ids=["cashKRW","brokerCash","pendingBrokerOutflow","emergency","plannedExpense","foreignRP","otherAsset","otherInvestment","debt","rebalanceRpDeploy","rebalanceBrokerDeploy","rebalanceCashDeploy","rebalanceNewDeploy","goalAmount","monthlyContribution","investmentPrincipal","incomeReceived","tradeAmount","monthlyIncome","fixedExpense","livingExpense","otherExpense"];
  ids.forEach(id=>{const el=document.getElementById(id);if(!el)return;el.type="text";el.inputMode="numeric";el.classList.add("money-input");if(!el.dataset.moneyBound){el.addEventListener("input",()=>handleMoneyInput(el));el.dataset.moneyBound="1";}});
