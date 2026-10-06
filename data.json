@@ -1,15 +1,15 @@
 {
-    "updated_at": "2026-10-06 06:16:10 KST",
+    "updated_at": "2026-10-07 04:09:51 KST",
     "strategy_version": "qqq_monthly_heikin_ashi_v1",
-    "fx_rate": 1341.3,
-    "fx_change": -19.29,
-    "fx_pct": -1.42,
+    "fx_rate": 1337.75,
+    "fx_change": -4.81,
+    "fx_pct": -0.36,
     "qqq": {
-        "price": 756.2,
-        "change": 6.62,
-        "pct": 0.88,
-        "sma_120": 709.18,
-        "sma_200": 667.97,
+        "price": 760.41,
+        "change": 4.21,
+        "pct": 0.56,
+        "sma_120": 710.22,
+        "sma_200": 668.78,
         "ha_monthly": {
             "state": "green",
             "previous_state": "green",
@@ -21,16 +21,16 @@
         }
     },
     "vxn": {
-        "price": 21.7,
-        "change": 0.5,
-        "pct": 2.36
+        "price": 21.01,
+        "change": -0.69,
+        "pct": -3.18
     },
     "btc_etf_flow": {
-        "latest_usd_m": 189.8,
-        "latest_date": "2026-10-02",
-        "five_day_usd_m": 241.1,
-        "five_day_start": "2026-09-28",
-        "five_day_end": "2026-10-02",
+        "latest_usd_m": -89.9,
+        "latest_date": "2026-10-05",
+        "five_day_usd_m": 120.1,
+        "five_day_start": "2026-09-29",
+        "five_day_end": "2026-10-05",
         "days_count": 5,
         "source": "CoinClass",
         "status": "ok"
@@ -39,70 +39,70 @@
         "qld": {
             "ticker": "QLD",
             "name": "QLD",
-            "price": 99.88,
+            "price": 100.965,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-06 06:16:10 KST"
+            "updated_at": "2026-10-07 04:09:51 KST"
         },
         "qqq": {
             "ticker": "QQQ",
             "name": "QQQ",
-            "price": 756.15,
+            "price": 760.384,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-06 06:16:10 KST"
+            "updated_at": "2026-10-07 04:09:51 KST"
         },
         "voo": {
             "ticker": "VOO",
             "name": "VOO",
-            "price": 712.41,
+            "price": 716.755,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-06 06:16:10 KST"
+            "updated_at": "2026-10-07 04:09:51 KST"
         },
         "brkb": {
             "ticker": "BRK-B",
             "name": "BRK.B",
-            "price": 504.35,
+            "price": 506.34,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-06 06:16:10 KST"
+            "updated_at": "2026-10-07 04:09:51 KST"
         },
         "visa": {
             "ticker": "V",
             "name": "Visa",
-            "price": 369.82,
+            "price": 370.0846,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-06 06:16:10 KST"
+            "updated_at": "2026-10-07 04:09:51 KST"
         },
         "tsm": {
             "ticker": "TSM",
             "name": "TSMC",
-            "price": 485.91,
+            "price": 483.47,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-06 06:16:10 KST"
+            "updated_at": "2026-10-07 04:09:51 KST"
         },
         "tem": {
             "ticker": "TEM",
             "name": "Tempus AI",
-            "price": 83.54,
+            "price": 72.63,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-06 06:16:10 KST"
+            "updated_at": "2026-10-07 04:09:51 KST"
         },
         "gold": {
             "ticker": "04020000",
             "name": "금 99.99_1kg",
-            "price": 183480.0,
+            "price": 182770.0,
             "currency": "KRW",
             "unit": "g",
-            "market_date": "20261001",
-            "change": 540.0,
-            "pct": 0.3,
+            "market_date": "20261002",
+            "change": -710.0,
+            "pct": -0.39,
             "status": "ok",
-            "updated_at": "2026-10-06 06:16:10 KST"
+            "updated_at": "2026-10-07 04:09:51 KST"
         }
     }
 }
