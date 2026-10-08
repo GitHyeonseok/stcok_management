@@ -458,7 +458,7 @@ def get_market_data():
         prices[key] = {
             "ticker": ticker,
             "name": name,
-            "price": latest_price(ticker),
+            "price": qqq_price if key == "qqq" else latest_price(ticker),
             "currency": "USD",
             "unit": "주",
             "updated_at": stamp,
@@ -502,8 +502,15 @@ def get_market_data():
         "prices": prices,
     }
 
-    with open("data.json", "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+    # Do not replace last successful data with zero/partial critical data.
+    valid = fx_rate > 0 and qqq_ha.get("state") in ("green", "red") and all(
+        float(v.get("price", 0)) > 0 for v in prices.values()
+    )
+    if not valid:
+        raise RuntimeError("Critical market data missing; existing data.json preserved")
+    with open("data.json.tmp", "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=4, allow_nan=False)
+    os.replace("data.json.tmp", "data.json")
 
     print(f"QQQ monthly HA: {qqq_ha}")
     print("data.json updated successfully!")
