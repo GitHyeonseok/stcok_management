@@ -1,15 +1,15 @@
 {
-    "updated_at": "2026-10-09 04:32:49 KST",
+    "updated_at": "2026-10-09 09:01:09 KST",
     "strategy_version": "qqq_monthly_heikin_ashi_v1",
-    "fx_rate": 1342.48,
-    "fx_change": 2.74,
-    "fx_pct": 0.2,
+    "fx_rate": 1342.6,
+    "fx_change": 3.52,
+    "fx_pct": 0.26,
     "qqq": {
-        "price": 746.12,
-        "change": -11.61,
-        "pct": -1.53,
-        "sma_120": 712.03,
-        "sma_200": 670.2,
+        "price": 757.73,
+        "change": -1.93,
+        "pct": -0.25,
+        "sma_120": 711.2,
+        "sma_200": 669.54,
         "ha_monthly": {
             "state": "green",
             "previous_state": "green",
@@ -21,9 +21,9 @@
         }
     },
     "vxn": {
-        "price": 22.33,
-        "change": 1.33,
-        "pct": 6.33
+        "price": 21.98,
+        "change": 0.98,
+        "pct": 4.67
     },
     "btc_etf_flow": {
         "latest_usd_m": -487.1,
@@ -39,70 +39,70 @@
         "qld": {
             "ticker": "QLD",
             "name": "QLD",
-            "price": 97.14,
+            "price": 97.51,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-09 04:32:49 KST"
+            "updated_at": "2026-10-09 09:01:09 KST"
         },
         "qqq": {
             "ticker": "QQQ",
             "name": "QQQ",
-            "price": 746.12,
+            "price": 757.73,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-09 04:32:49 KST"
+            "updated_at": "2026-10-09 09:01:09 KST"
         },
         "voo": {
             "ticker": "VOO",
             "name": "VOO",
-            "price": 710.6019,
+            "price": 711.3,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-09 04:32:49 KST"
+            "updated_at": "2026-10-09 09:01:09 KST"
         },
         "brkb": {
             "ticker": "BRK-B",
             "name": "BRK.B",
-            "price": 511.88,
+            "price": 511.1,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-09 04:32:49 KST"
+            "updated_at": "2026-10-09 09:01:09 KST"
         },
         "visa": {
             "ticker": "V",
             "name": "Visa",
-            "price": 377.48,
+            "price": 375.12,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-09 04:32:49 KST"
+            "updated_at": "2026-10-09 09:01:09 KST"
         },
         "tsm": {
             "ticker": "TSM",
             "name": "TSMC",
-            "price": 455.43,
+            "price": 458.05,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-09 04:32:49 KST"
+            "updated_at": "2026-10-09 09:01:09 KST"
         },
         "tem": {
             "ticker": "TEM",
             "name": "Tempus AI",
-            "price": 68.345,
+            "price": 69.33,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-09 04:32:49 KST"
+            "updated_at": "2026-10-09 09:01:09 KST"
         },
         "gold": {
             "ticker": "04020000",
             "name": "금 99.99_1kg",
-            "price": 178750.0,
+            "price": 177480.0,
             "currency": "KRW",
             "unit": "g",
-            "market_date": "20261007",
-            "change": -250.0,
-            "pct": -0.14,
+            "market_date": "20261008",
+            "change": -1270.0,
+            "pct": -0.71,
             "status": "ok",
-            "updated_at": "2026-10-09 04:32:49 KST"
+            "updated_at": "2026-10-09 09:01:09 KST"
         }
     }
 }
