@@ -1,9 +1,9 @@
 {
-    "updated_at": "2026-10-16 05:36:52 KST",
+    "updated_at": "2026-10-16 08:21:48 KST",
     "strategy_version": "qqq_monthly_heikin_ashi_v1",
-    "fx_rate": 1341.5,
-    "fx_change": 1.19,
-    "fx_pct": 0.09,
+    "fx_rate": 1340.78,
+    "fx_change": 1.43,
+    "fx_pct": 0.11,
     "qqq": {
         "price": 728.0,
         "change": -0.95,
@@ -26,9 +26,9 @@
         "pct": 7.38
     },
     "btc_etf_flow": {
-        "latest_usd_m": 0.0,
+        "latest_usd_m": -7.6,
         "latest_date": "2026-10-15",
-        "five_day_usd_m": -130.0,
+        "five_day_usd_m": -137.6,
         "five_day_start": "2026-10-09",
         "five_day_end": "2026-10-15",
         "days_count": 5,
@@ -42,7 +42,7 @@
             "price": 92.36,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-16 05:36:52 KST"
+            "updated_at": "2026-10-16 08:21:48 KST"
         },
         "qqq": {
             "ticker": "QQQ",
@@ -50,7 +50,7 @@
             "price": 728.0,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-16 05:36:52 KST"
+            "updated_at": "2026-10-16 08:21:48 KST"
         },
         "voo": {
             "ticker": "VOO",
@@ -58,7 +58,7 @@
             "price": 709.44,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-16 05:36:52 KST"
+            "updated_at": "2026-10-16 08:21:48 KST"
         },
         "brkb": {
             "ticker": "BRK-B",
@@ -66,7 +66,7 @@
             "price": 525.98,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-16 05:36:52 KST"
+            "updated_at": "2026-10-16 08:21:48 KST"
         },
         "visa": {
             "ticker": "V",
@@ -74,7 +74,7 @@
             "price": 399.6,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-16 05:36:52 KST"
+            "updated_at": "2026-10-16 08:21:48 KST"
         },
         "tsm": {
             "ticker": "TSM",
@@ -82,7 +82,7 @@
             "price": 422.55,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-16 05:36:52 KST"
+            "updated_at": "2026-10-16 08:21:48 KST"
         },
         "tem": {
             "ticker": "TEM",
@@ -90,19 +90,19 @@
             "price": 71.15,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-16 05:36:52 KST"
+            "updated_at": "2026-10-16 08:21:48 KST"
         },
         "gold": {
             "ticker": "04020000",
             "name": "금 99.99_1kg",
-            "price": 179180.0,
+            "price": 179050.0,
             "currency": "KRW",
             "unit": "g",
-            "market_date": "20261014",
-            "change": -1920.0,
-            "pct": -1.06,
+            "market_date": "20261015",
+            "change": -130.0,
+            "pct": -0.07,
             "status": "ok",
-            "updated_at": "2026-10-16 05:36:52 KST"
+            "updated_at": "2026-10-16 08:21:48 KST"
         }
     }
 }
