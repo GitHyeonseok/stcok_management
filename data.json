@@ -1,15 +1,15 @@
 {
-    "updated_at": "2026-10-24 06:05:47 KST",
+    "updated_at": "2026-10-27 04:37:15 KST",
     "strategy_version": "qqq_monthly_heikin_ashi_v1",
-    "fx_rate": 1323.66,
-    "fx_change": -1.93,
-    "fx_pct": -0.15,
+    "fx_rate": 1325.42,
+    "fx_change": -0.57,
+    "fx_pct": -0.04,
     "qqq": {
-        "price": 704.4,
-        "change": -0.07,
-        "pct": -0.01,
-        "sma_120": 718.15,
-        "sma_200": 676.1,
+        "price": 713.38,
+        "change": 8.98,
+        "pct": 1.27,
+        "sma_120": 718.43,
+        "sma_200": 676.57,
         "ha_monthly": {
             "state": "green",
             "previous_state": "green",
@@ -21,88 +21,88 @@
         }
     },
     "vxn": {
-        "price": 28.3,
-        "change": -0.42,
-        "pct": -1.46
+        "price": 25.94,
+        "change": -2.36,
+        "pct": -8.34
     },
     "btc_etf_flow": {
         "latest_usd_m": 0.0,
-        "latest_date": "2026-10-23",
-        "five_day_usd_m": 439.1,
-        "five_day_start": "2026-10-19",
-        "five_day_end": "2026-10-23",
+        "latest_date": "2026-10-26",
+        "five_day_usd_m": -225.5,
+        "five_day_start": "2026-10-20",
+        "five_day_end": "2026-10-26",
         "days_count": 5,
-        "source": "CoinClass",
+        "source": "Farside Investors",
         "status": "ok"
     },
     "prices": {
         "qld": {
             "ticker": "QLD",
             "name": "QLD",
-            "price": 86.16,
+            "price": 88.35,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-24 06:05:47 KST"
+            "updated_at": "2026-10-27 04:37:15 KST"
         },
         "qqq": {
             "ticker": "QQQ",
             "name": "QQQ",
-            "price": 704.4,
+            "price": 713.38,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-24 06:05:47 KST"
+            "updated_at": "2026-10-27 04:37:15 KST"
         },
         "voo": {
             "ticker": "VOO",
             "name": "VOO",
-            "price": 698.48,
+            "price": 703.71,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-24 06:05:47 KST"
+            "updated_at": "2026-10-27 04:37:15 KST"
         },
         "brkb": {
             "ticker": "BRK-B",
             "name": "BRK.B",
-            "price": 542.46,
+            "price": 547.6,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-24 06:05:47 KST"
+            "updated_at": "2026-10-27 04:37:15 KST"
         },
         "visa": {
             "ticker": "V",
             "name": "Visa",
-            "price": 407.94,
+            "price": 403.87,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-24 06:05:47 KST"
+            "updated_at": "2026-10-27 04:37:15 KST"
         },
         "tsm": {
             "ticker": "TSM",
             "name": "TSMC",
-            "price": 418.365,
+            "price": 427.91,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-24 06:05:47 KST"
+            "updated_at": "2026-10-27 04:37:15 KST"
         },
         "tem": {
             "ticker": "TEM",
             "name": "Tempus AI",
-            "price": 67.615,
+            "price": 66.32,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-24 06:05:47 KST"
+            "updated_at": "2026-10-27 04:37:15 KST"
         },
         "gold": {
             "ticker": "04020000",
             "name": "금 99.99_1kg",
-            "price": 174290.0,
+            "price": 171250.0,
             "currency": "KRW",
             "unit": "g",
-            "market_date": "20261022",
-            "change": -960.0,
-            "pct": -0.55,
+            "market_date": "20261023",
+            "change": -3040.0,
+            "pct": -1.74,
             "status": "ok",
-            "updated_at": "2026-10-24 06:05:47 KST"
+            "updated_at": "2026-10-27 04:37:15 KST"
         }
     }
 }
