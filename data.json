@@ -1,36 +1,36 @@
 {
-    "updated_at": "2026-10-31 03:54:46 KST",
+    "updated_at": "2026-11-03 07:30:14 KST",
     "strategy_version": "qqq_monthly_heikin_ashi_v1",
-    "fx_rate": 1333.97,
-    "fx_change": -6.37,
-    "fx_pct": -0.48,
+    "fx_rate": 1345.81,
+    "fx_change": 7.83,
+    "fx_pct": 0.59,
     "qqq": {
-        "price": 683.64,
-        "change": -31.7,
-        "pct": -4.43,
-        "sma_120": 718.72,
-        "sma_200": 678.34,
+        "price": 681.09,
+        "change": -9.4,
+        "pct": -1.36,
+        "sma_120": 718.57,
+        "sma_200": 678.68,
         "ha_monthly": {
             "state": "green",
             "previous_state": "green",
             "changed": false,
             "transition": "none",
-            "completed_month": "2026-09",
-            "ha_open": 701.0286,
-            "ha_close": 723.5112
+            "completed_month": "2026-10",
+            "ha_open": 712.2699,
+            "ha_close": 719.8275
         }
     },
     "vxn": {
-        "price": 31.65,
-        "change": 6.47,
-        "pct": 25.69
+        "price": 30.89,
+        "change": 2.39,
+        "pct": 8.39
     },
     "btc_etf_flow": {
         "latest_usd_m": 0.0,
-        "latest_date": "2026-10-30",
-        "five_day_usd_m": 440.8,
-        "five_day_start": "2026-10-26",
-        "five_day_end": "2026-10-30",
+        "latest_date": "2026-11-02",
+        "five_day_usd_m": -312.7,
+        "five_day_start": "2026-10-27",
+        "five_day_end": "2026-11-02",
         "days_count": 5,
         "source": "Farside Investors",
         "status": "ok"
@@ -39,70 +39,70 @@
         "qld": {
             "ticker": "QLD",
             "name": "QLD",
-            "price": 80.89,
+            "price": 80.34,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-31 03:54:46 KST"
+            "updated_at": "2026-11-03 07:30:14 KST"
         },
         "qqq": {
             "ticker": "QQQ",
             "name": "QQQ",
-            "price": 683.64,
+            "price": 681.09,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-31 03:54:46 KST"
+            "updated_at": "2026-11-03 07:30:14 KST"
         },
         "voo": {
             "ticker": "VOO",
             "name": "VOO",
-            "price": 689.9507,
+            "price": 691.33,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-31 03:54:46 KST"
+            "updated_at": "2026-11-03 07:30:14 KST"
         },
         "brkb": {
             "ticker": "BRK-B",
             "name": "BRK.B",
-            "price": 544.11,
+            "price": 556.715,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-31 03:54:46 KST"
+            "updated_at": "2026-11-03 07:30:14 KST"
         },
         "visa": {
             "ticker": "V",
             "name": "Visa",
-            "price": 415.16,
+            "price": 425.51,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-31 03:54:46 KST"
+            "updated_at": "2026-11-03 07:30:14 KST"
         },
         "tsm": {
             "ticker": "TSM",
             "name": "TSMC",
-            "price": 400.6,
+            "price": 398.44,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-31 03:54:46 KST"
+            "updated_at": "2026-11-03 07:30:14 KST"
         },
         "tem": {
             "ticker": "TEM",
             "name": "Tempus AI",
-            "price": 71.76,
+            "price": 78.47,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-10-31 03:54:46 KST"
+            "updated_at": "2026-11-03 07:30:14 KST"
         },
         "gold": {
             "ticker": "04020000",
             "name": "금 99.99_1kg",
-            "price": 173000.0,
+            "price": 171020.0,
             "currency": "KRW",
             "unit": "g",
-            "market_date": "20261029",
-            "change": -190.0,
-            "pct": -0.11,
+            "market_date": "20261030",
+            "change": -1980.0,
+            "pct": -1.14,
             "status": "ok",
-            "updated_at": "2026-10-31 03:54:46 KST"
+            "updated_at": "2026-11-03 07:30:14 KST"
         }
     }
 }
