@@ -1,15 +1,15 @@
 {
-    "updated_at": "2026-11-19 06:39:08 KST",
+    "updated_at": "2026-11-20 06:53:48 KST",
     "strategy_version": "qqq_monthly_heikin_ashi_v1",
-    "fx_rate": 1331.85,
-    "fx_change": -3.82,
-    "fx_pct": -0.29,
+    "fx_rate": 1334.47,
+    "fx_change": 1.46,
+    "fx_pct": 0.11,
     "qqq": {
-        "price": 659.51,
-        "change": 2.56,
-        "pct": 0.39,
-        "sma_120": 714.07,
-        "sma_200": 681.8,
+        "price": 645.04,
+        "change": -14.47,
+        "pct": -2.19,
+        "sma_120": 713.27,
+        "sma_200": 682.01,
         "ha_monthly": {
             "state": "green",
             "previous_state": "green",
@@ -21,16 +21,16 @@
         }
     },
     "vxn": {
-        "price": 33.12,
-        "change": -1.32,
-        "pct": -3.83
+        "price": 36.48,
+        "change": 3.36,
+        "pct": 10.14
     },
     "btc_etf_flow": {
         "latest_usd_m": 0.0,
-        "latest_date": "2026-11-18",
-        "five_day_usd_m": -701.5,
-        "five_day_start": "2026-11-12",
-        "five_day_end": "2026-11-18",
+        "latest_date": "2026-11-19",
+        "five_day_usd_m": -723.9,
+        "five_day_start": "2026-11-13",
+        "five_day_end": "2026-11-19",
         "days_count": 5,
         "source": "Farside Investors",
         "status": "ok"
@@ -39,70 +39,70 @@
         "qld": {
             "ticker": "QLD",
             "name": "QLD",
-            "price": 74.54,
+            "price": 71.25,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-11-19 06:39:08 KST"
+            "updated_at": "2026-11-20 06:53:48 KST"
         },
         "qqq": {
             "ticker": "QQQ",
             "name": "QQQ",
-            "price": 659.51,
+            "price": 645.04,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-11-19 06:39:08 KST"
+            "updated_at": "2026-11-20 06:53:48 KST"
         },
         "voo": {
             "ticker": "VOO",
             "name": "VOO",
-            "price": 671.25,
+            "price": 657.94,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-11-19 06:39:08 KST"
+            "updated_at": "2026-11-20 06:53:48 KST"
         },
         "brkb": {
             "ticker": "BRK-B",
             "name": "BRK.B",
-            "price": 574.28,
+            "price": 572.08,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-11-19 06:39:08 KST"
+            "updated_at": "2026-11-20 06:53:48 KST"
         },
         "visa": {
             "ticker": "V",
             "name": "Visa",
-            "price": 415.14,
+            "price": 402.42,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-11-19 06:39:08 KST"
+            "updated_at": "2026-11-20 06:53:48 KST"
         },
         "tsm": {
             "ticker": "TSM",
             "name": "TSMC",
-            "price": 362.62,
+            "price": 352.09,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-11-19 06:39:08 KST"
+            "updated_at": "2026-11-20 06:53:48 KST"
         },
         "tem": {
             "ticker": "TEM",
             "name": "Tempus AI",
-            "price": 63.66,
+            "price": 59.57,
             "currency": "USD",
             "unit": "주",
-            "updated_at": "2026-11-19 06:39:08 KST"
+            "updated_at": "2026-11-20 06:53:48 KST"
         },
         "gold": {
             "ticker": "04020000",
             "name": "금 99.99_1kg",
-            "price": 166860.0,
+            "price": 162090.0,
             "currency": "KRW",
             "unit": "g",
-            "market_date": "20261117",
-            "change": 760.0,
-            "pct": 0.46,
+            "market_date": "20261118",
+            "change": -4770.0,
+            "pct": -2.86,
             "status": "ok",
-            "updated_at": "2026-11-19 06:39:08 KST"
+            "updated_at": "2026-11-20 06:53:48 KST"
         }
     }
 }
